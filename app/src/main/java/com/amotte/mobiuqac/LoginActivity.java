@@ -80,8 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         Toast.makeText(getApplicationContext(), "Authentication réussie !",
                                                 Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                                        finish();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));finish();
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Email ou mot de passe incorrect.",
                                                 Toast.LENGTH_SHORT).show();
