@@ -8,7 +8,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <View
             android:layout_width="match_parent"
@@ -21,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp">
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="-80dp">
 
             <EditText
                 android:id="@+id/emailinput"
@@ -47,7 +49,8 @@
                 android:inputType="textPassword"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:layout_marginBottom="80dp"/>
         </RelativeLayout>
 
         <ImageView
@@ -73,13 +76,42 @@
             android:id="@+id/btSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/textViewOU"
+
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/button_red"
-            android:text="Creer un compte"
+            android:text="S'incrire"
             android:textColor="@color/colorWhite" />
+
+        <TextView
+            android:id="@+id/textViewOU"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/googleSignin"
+
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="ou"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleSignin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            >
+
+        </com.google.android.gms.common.SignInButton>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
