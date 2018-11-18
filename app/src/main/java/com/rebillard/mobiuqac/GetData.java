@@ -28,6 +28,14 @@ public class GetData {
      */
     public static ArrayList<Cours> getHoraires(String cours) throws Exception{
         String codeSource = GetSource.getCode(link + "/" + cours);
-        return Parser.parseIntoCours(codeSource);
+        ArrayList<Cours> allCours = Parser.parseIntoCours(codeSource);
+        ArrayList<Cours> result = new ArrayList<Cours>();
+        for (Cours nameCours : allCours) {
+            nameCours.setIdentifiant(cours);
+            nameCours.setId(nameCours.getSemestre()
+                    + nameCours.getIdentifiant() + nameCours.getGroup());
+            result.add(nameCours);
+        }
+        return result;
     }
 }
