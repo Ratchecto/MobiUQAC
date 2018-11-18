@@ -8,6 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,12 +21,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rebillard.mobiuqac.Cours;
+import com.rebillard.mobiuqac.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextMessage;
     private FirebaseAuth mAuth;
+    DatabaseReference rootRef;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -49,7 +55,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        findViewById(R.id.buttonBasic).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BasicActivity.class);
+                startActivity(intent);
+            }
+        });
 
+        findViewById(R.id.buttonAsynchronous).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AsynchronousActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -59,36 +79,51 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
+        FirebaseUser FirebaseUser = mAuth.getCurrentUser();
+        if (FirebaseUser == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
 
         }
+        else {
+            rootRef = FirebaseDatabase.getInstance().getReference();
 
-        TextView mTextMessage2 = (TextView) findViewById(R.id.message2);
-        mTextMessage2.setText(user.getEmail());
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-        DatabaseReference ref = myRef.child(user.getUid());
-
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Cours value = dataSnapshot.getValue(Cours.class);
-                TextView mTextMessage3 = (TextView) findViewById(R.id.message3);
-                mTextMessage3.setText(value.getName());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+            TextView mTextMessage2 = (TextView) findViewById(R.id.message2);
+            mTextMessage2.setText(FirebaseUser.getEmail());
 
 
+
+            DatabaseReference userRef = rootRef.child("Users").child(FirebaseUser.getUid());
+            DatabaseReference cours = rootRef.child("Cours");
+            User user = new User();
+            user.addCours("cc");
+            user.addCours("ouiiii");
+            mTextMessage2.setText(user.getCours().toString());
+            userRef.setValue(user);
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User value = dataSnapshot.getValue(User.class);
+                    TextView mTextMessage3 = (TextView) findViewById(R.id.message3);
+                    for( String cour : value.getCours()){
+                        //FirebaseDatabase db =
+                        //        rootRef.child("Cours");
+
+                    }
+                    mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+
+        }
     }
+
+
 
 }
