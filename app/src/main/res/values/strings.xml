@@ -20,6 +20,7 @@
     </string>
     <!-- String related to calendar -->
     <string name="AddEvent">Ajouter un evenement</string>
+    <string name="AddCours">Ajouter un cours</string>
     <string name="DateDebut">Date de début</string>
     <string name="DateFin">Date de fin</string>
     <string name="Titre">Titre</string>

@@ -26,14 +26,14 @@
             app:todayBackgroundColor="#1848adff"
             app:headerColumnBackground="#ffffffff"/>
 
-        <!--<Button
+        <Button
             android:id="@+id/addEvent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/AddEvent"
+            android:text="@string/AddCours"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:onClick="AddEvent"/>-->
+            android:onClick="AddCours"/>
 
     </RelativeLayout>
 

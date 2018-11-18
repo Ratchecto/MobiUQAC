@@ -20,6 +20,7 @@ import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.google.firebase.auth.FirebaseAuth;
+import com.rebillard.mobiuqac.Cours;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,17 +83,18 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         // All day event until 00:00 next day
         startTime = Calendar.getInstance();
         startTime.set(Calendar.DAY_OF_MONTH, 10);
-        startTime.set(Calendar.HOUR_OF_DAY, 0);
+        startTime.set(Calendar.HOUR_OF_DAY, 8);
         startTime.set(Calendar.MINUTE, 0);
         startTime.set(Calendar.SECOND, 0);
         startTime.set(Calendar.MILLISECOND, 0);
         startTime.set(Calendar.MONTH, newMonth-1);
         startTime.set(Calendar.YEAR, newYear);
         Calendar endTime = (Calendar) startTime.clone();
-        endTime.set(Calendar.DAY_OF_MONTH, 11);
-        /*WeekViewEvent event = new WeekViewEvent(8, getEventTitle(startTime), null, startTime, endTime, true);
+        endTime.set(Calendar.HOUR_OF_DAY, 9);
+        endTime.set(Calendar.MINUTE, 30);
+        WeekViewEvent event = new WeekViewEvent (8, "Titre de l'event", startTime, endTime);
         event.setColor(getResources().getColor(R.color.colorPrimary));
-        events.add(event);*/
+        events.add(event);
 
         return events;
     }
@@ -104,6 +106,30 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
+
+    }
+
+    public void AddCours(Cours c){
+
+        String[] dateDebCours = c.getDateBeg().split("-");
+        String[] dateFinCours = c.getDateFinish().split("-");
+
+        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateDebCours[0]));
+        startTime.set(Calendar.HOUR_OF_DAY, 8);
+        startTime.set(Calendar.MINUTE, 0);
+        startTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1]));
+        startTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
+        Calendar endTime = (Calendar) startTime.clone();
+        endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateFinCours[0]));
+        endTime.set(Calendar.HOUR_OF_DAY, 9);
+        endTime.set(Calendar.MINUTE, 30);
+        endTime.set(Calendar.MONTH, Integer.parseInt(dateFinCours[1]));
+        endTime.set(Calendar.YEAR, Integer.parseInt(dateFinCours[2]));
+        WeekViewEvent event = new WeekViewEvent (8, c.getName(), startTime, endTime);
+        event.setColor(getResources().getColor(R.color.colorPrimary));
+        events.add(event);
 
     }
 
