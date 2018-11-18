@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "179132415940-gavpe5oh6pssadreu5i67n9g2cje197m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amotte.mobiuqac",
+            "certificate_hash": "2ebdde267600749323f634aeb877ce4cbe8c5425"
+          }
+        },
+        {
           "client_id": "179132415940-9n0oj834a3ad21daggpqdh4a2prghh3c.apps.googleusercontent.com",
           "client_type": 3
         }
