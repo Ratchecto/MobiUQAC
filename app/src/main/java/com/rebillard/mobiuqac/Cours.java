@@ -29,6 +29,14 @@ public class Cours {
         this.name = name;
     }
 
+
+    public  Cours(String name){
+        this.name = name;
+    }
+    public  Cours(){
+
+    }
+
     /**
      * Obtenir la date de début
      *
