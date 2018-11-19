@@ -35,6 +35,7 @@ import com.rebillard.mobiuqac.ListeCours;
 import com.rebillard.mobiuqac.User;
 import com.rebillard.mobiuqac.Cours;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,8 +89,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         coursTest.setName("Cours de test");
         coursTest.setDateBeg("18-11-2018");
         coursTest.setDateFinish("17-12-2018");
-        coursTest.setHourBeg("8:00");
-        coursTest.setHourFinish("9:30");
+        coursTest.setHourBegin("8:00");
+        coursTest.setHourFinish("19:30");
 
         btnAjoutCours.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,8 +164,34 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }//onActivityResult
 
     @Override
-    public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-                return events;
+    public List<? extends WeekViewEvent> onMonthChange(int year, int month) {
+        // Get the starting point and ending point of the given month. We need this to find the
+        // events of the given month.
+        Calendar startOfMonth = Calendar.getInstance();
+        startOfMonth.set(Calendar.YEAR, year);
+        startOfMonth.set(Calendar.MONTH, month - 1);
+        startOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+        startOfMonth.set(Calendar.HOUR_OF_DAY, 0);
+        startOfMonth.set(Calendar.MINUTE, 0);
+        startOfMonth.set(Calendar.SECOND, 0);
+        startOfMonth.set(Calendar.MILLISECOND, 0);
+        Calendar endOfMonth = (Calendar) startOfMonth.clone();
+        endOfMonth.set(Calendar.DAY_OF_MONTH, endOfMonth.getMaximum(Calendar.DAY_OF_MONTH));
+        endOfMonth.set(Calendar.HOUR_OF_DAY, 23);
+        endOfMonth.set(Calendar.MINUTE, 59);
+        endOfMonth.set(Calendar.SECOND, 59);
+
+        // Find the events that were added by tapping on empty view and that occurs in the given
+        // time frame.
+        ArrayList<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        for (WeekViewEvent event : this.events) {
+            if (event.getEndTime().getTimeInMillis() > startOfMonth.getTimeInMillis() &&
+                    event.getStartTime().getTimeInMillis() < endOfMonth.getTimeInMillis()) {
+                events.add(event);
+
+            }
+        }
+        return events;
     }
     public void onEmptyViewClicked(final Calendar time) {
         clickedTime=(Calendar) time.clone();
@@ -179,9 +206,12 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     public List<? extends WeekViewEvent> AddCours(Cours c){
 
+       // Log.e("cccc",debut.toString()+"----"+fin.toString());
+        Log.e("cccc",c.toString());
+
         String[] dateDebCours = c.getDateBeg().split("-");
         String[] dateFinCours = c.getDateFinish().split("-");
-        String[] heureDeb = c.getHourBeg().split(":");
+        String[] heureDeb = c.getHourBegin().split(":");
         String[] heureFin = c.getHourFinish().split(":");
 
         Calendar startTime = Calendar.getInstance();
@@ -196,37 +226,60 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         endTime.set(Calendar.MINUTE, Integer.parseInt(heureFin[1]));
         endTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
         endTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
+
         WeekViewEvent event = new WeekViewEvent (1, c.getName(), startTime, endTime);
         event.setColor(getResources().getColor(R.color.colorPrimary));
 
         events.add(event);
+        events.get(0).toString();
         mWeekView.notifyDatasetChanged();
 
-        Toast.makeText(this, "Cours ajouté : " + c.getName(), Toast.LENGTH_LONG).show();
-
+        Log.e("cccc","ajout de :");
         return events;
     }
 
     public void addCours2(Cours c){
         Date cur = new Date();
         Date debut;
+        Date debut2;
         Date fin;
         Calendar cal = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+
         ArrayList<Date> l =new ArrayList<>();
 
         try {
-            debut=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateBeg());
+            debut=new SimpleDateFormat("dd-MM-yyyyHH:mm").parse(c.getDateBeg()+c.getHourBegin());
+            debut2=new SimpleDateFormat("dd-MM-yyyyHH:mm").parse(c.getDateBeg()+c.getHourFinish());
             fin=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateFinish());
             cur=debut;
             cal.setTime(debut);
-            while (cur.compareTo(fin) < 0){
-                //addevent here
+            cal2.setTime(debut2);
+
+            while (cur.compareTo(fin) <= 0){
+                Cours cc = new Cours();
+                cc.setName(c.getName());
+
+                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                String d = dateFormat.format(cur);
+                cc.setDateBeg(d);
+
+                cc.setHourBegin(c.getHourBegin());
+                cc.setHourFinish(c.getHourFinish());
+
+
+                AddCours(cc);
+
+                //AddCours(cal,cal2,c.getName());
+
+
                 l.add(cur);
                 cal.add(Calendar.WEEK_OF_MONTH, 1);
+                cal2.add(Calendar.WEEK_OF_MONTH, 1);
                 cur = cal.getTime();
 
             }
-            Log.e("AddCours",l.toString());
+            Log.e("cccc",l.toString());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -249,6 +302,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             DatabaseReference userRef = rootRef.child("users").child(FirebaseUser.getUid());
             user = new User("salut");
             user.addNomCours("Automne 20181ASP100Groupe 11 (CHICOUTIMI SOIR)");
+            user.addNomCours("Automne 20181BCS107Groupe 01 (CHICOUTIMI JOUR)");
             userRef.setValue(user);
 
             userRef.addValueEventListener(new ValueEventListener() {
@@ -272,10 +326,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                             for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                                 dbCours.addCours(dsp.getValue(Cours.class));
 
+
                             }
                             user.updateCours(dbCours.getCoursFromUser(user));
                             Log.e("ccccd", dbCours.getCoursFromUser(user).get(0).toString());
-                            addCours2(dbCours.getCoursBySemester("Automne 2018").get(1));
+                            for (Cours cour: dbCours.getCoursFromUser(user))
+                                addCours2(cour);
+                            //AddCours()
 
 
                         }

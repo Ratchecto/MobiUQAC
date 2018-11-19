@@ -57,7 +57,7 @@ public class Parser {
                 cours.setDay(last[1]);
                 cours.setDateBeg(last[2]);
                 cours.setDateFinish(last[5]);
-                cours.setHourBeg(last[7]);
+                cours.setHourBegin(last[7]);
                 cours.setHourFinish(last[9]);
                 cours.setLocal(last[11]);
             }
