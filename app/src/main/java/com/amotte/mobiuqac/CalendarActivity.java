@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +20,14 @@ import android.widget.Toast;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.WeekViewLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.rebillard.mobiuqac.Cours;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -33,13 +36,30 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     int annee, mois, jours;
     WeekView mWeekView;
-    List<WeekViewEvent> events;
+    List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     Calendar clickedTime;
+    Button btnAjoutCours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        btnAjoutCours = findViewById(R.id.addCours);
+
+        final Cours coursTest = new Cours();
+        coursTest.setName("Cours de test");
+        coursTest.setDateBeg("18-11-2018");
+        coursTest.setDateFinish("17-12-2018");
+        coursTest.setHourBeg("8:00");
+        coursTest.setHourFinish("9:30");
+
+        btnAjoutCours.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddCours(coursTest);
+            }
+        });
 
         // Get a reference for the week view in the layout.
         mWeekView = findViewById(R.id.weekView);
@@ -58,46 +78,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOnEventClickListener(this);
 
-        //CalendarView cal = (CalendarView) findViewById(R.id.calendar); // get the reference of CalendarView
-
-        /*cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                annee = year;
-                mois = month;
-                jours = dayOfMonth;
-                // display the selected date by using a toast
-                Toast.makeText(getApplicationContext(), dayOfMonth + "/" + (month+=1) + "/" + year, Toast.LENGTH_LONG).show();
-            }
-        });*/
-
     }
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-        //Toast.makeText(this, "newMonth: "+newMonth+"  newYear: "+newYear, Toast.LENGTH_SHORT).show();
-
-        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-        Calendar startTime = Calendar.getInstance();
-
-        // All day event until 00:00 next day
-        startTime = Calendar.getInstance();
-        startTime.set(Calendar.DAY_OF_MONTH, 10);
-        startTime.set(Calendar.HOUR_OF_DAY, 8);
-        startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.SECOND, 0);
-        startTime.set(Calendar.MILLISECOND, 0);
-        startTime.set(Calendar.MONTH, newMonth-1);
-        startTime.set(Calendar.YEAR, newYear);
-        Calendar endTime = (Calendar) startTime.clone();
-        endTime.set(Calendar.HOUR_OF_DAY, 9);
-        endTime.set(Calendar.MINUTE, 30);
-        WeekViewEvent event = new WeekViewEvent (8, "Titre de l'event", startTime, endTime);
-        event.setColor(getResources().getColor(R.color.colorPrimary));
-        events.add(event);
-
-        return events;
+                return events;
     }
+
     public void onEmptyViewClicked(final Calendar time) {
         clickedTime=(Calendar) time.clone();
         mWeekView.notifyDatasetChanged();
@@ -109,35 +96,33 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     }
 
-    public void AddCours(Cours c){
+    public List<? extends WeekViewEvent> AddCours(Cours c){
 
         String[] dateDebCours = c.getDateBeg().split("-");
         String[] dateFinCours = c.getDateFinish().split("-");
+        String[] heureDeb = c.getHourBeg().split(":");
+        String[] heureFin = c.getHourFinish().split(":");
 
-        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateDebCours[0]));
-        startTime.set(Calendar.HOUR_OF_DAY, 8);
-        startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1]));
+        startTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(heureDeb[0]));
+        startTime.set(Calendar.MINUTE, Integer.parseInt(heureDeb[1]));
+        startTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
         startTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
         Calendar endTime = (Calendar) startTime.clone();
-        endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateFinCours[0]));
-        endTime.set(Calendar.HOUR_OF_DAY, 9);
-        endTime.set(Calendar.MINUTE, 30);
-        endTime.set(Calendar.MONTH, Integer.parseInt(dateFinCours[1]));
-        endTime.set(Calendar.YEAR, Integer.parseInt(dateFinCours[2]));
-        WeekViewEvent event = new WeekViewEvent (8, c.getName(), startTime, endTime);
+        endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateDebCours[0]));
+        endTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(heureFin[0]));
+        endTime.set(Calendar.MINUTE, Integer.parseInt(heureFin[1]));
+        endTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
+        endTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
+        WeekViewEvent event = new WeekViewEvent (1, c.getName(), startTime, endTime);
         event.setColor(getResources().getColor(R.color.colorPrimary));
+
         events.add(event);
+        mWeekView.notifyDatasetChanged();
 
-    }
+        Toast.makeText(this, "Cours ajouté : " + c.getName(), Toast.LENGTH_LONG).show();
 
-    public void AddEvent(View v){
-        Intent addEvent = new Intent(CalendarActivity.this, AjouterEventActivity.class);
-        addEvent.putExtra("int_annee", annee);
-        addEvent.putExtra("int_mois", mois);
-        addEvent.putExtra("int_jours", jours);
-        startActivity(addEvent);
+        return events;
     }
 }

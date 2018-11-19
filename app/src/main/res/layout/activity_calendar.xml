@@ -19,7 +19,7 @@
             app:headerColumnPadding="8dp"
             app:headerColumnTextColor="#8f000000"
             app:headerRowPadding="12dp"
-            app:columnGap="8dp"
+            app:columnGap="16dp"
             app:noOfVisibleDays="7"
             app:headerRowBackgroundColor="#ffefefef"
             app:dayBackgroundColor="#05000000"
@@ -27,13 +27,12 @@
             app:headerColumnBackground="#ffffffff"/>
 
         <Button
-            android:id="@+id/addEvent"
+            android:id="@+id/addCours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/AddCours"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="AddCours"/>
+            android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 
