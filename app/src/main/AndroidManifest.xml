@@ -48,6 +48,12 @@
 
         </activity>
 
+        <activity
+            android:name=".RemoveCours"
+            android:label="Supprimer un cours">
+
+        </activity>
+
     </application>
 
 </manifest>
