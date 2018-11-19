@@ -7,7 +7,7 @@ public class Cours {
     private String name = "";
     private String group = "";
     private String day = "";
-    private String hourBeg = "";
+    private String hourBegin = "";
     private String hourFinish = "";
     private String dateBeg = "";
     private String dateFinish = "";
@@ -67,10 +67,10 @@ public class Cours {
         this.day = day;
     }
     public String getHourBeg() {
-        return hourBeg;
+        return hourBegin;
     }
     public void setHourBeg(String hourBeg) {
-        this.hourBeg = hourBeg;
+        this.hourBegin = hourBeg;
     }
     public String getHourFinish() {
         return hourFinish;
@@ -89,7 +89,7 @@ public class Cours {
     public String toString() {
         return "Cours [id =" + id + ", name =" + name + ", semeste= " + semestre
                 + ", group=" + group + ", day=" + day + ", hourBeg="
-                + hourBeg + ", hourFinish=" + hourFinish + ", dateBeg="
+                + hourBegin + ", hourFinish=" + hourFinish + ", dateBeg="
                 + dateBeg + ", dateFinish=" + dateFinish + ", local=" + local
                 + "]";
     }

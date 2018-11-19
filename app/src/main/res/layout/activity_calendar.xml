@@ -43,6 +43,7 @@
             android:layout_alignStart="@+id/fab1"
             android:layout_alignTop="@+id/fab1"
             android:layout_gravity="bottom|end"
+            app:backgroundTint="@color/colorPrimary"
             app:srcCompat="@android:drawable/ic_menu_help" />
 
         <android.support.design.widget.FloatingActionButton
@@ -52,6 +53,8 @@
             android:layout_alignStart="@+id/fab1"
             android:layout_alignTop="@+id/fab1"
             android:layout_gravity="bottom|end"
+            app:backgroundTint="@color/colorPrimary"
+
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
         <android.support.design.widget.FloatingActionButton
@@ -63,6 +66,8 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="33dp"
             android:layout_marginBottom="81dp"
+            app:backgroundTint="@color/colorPrimary"
+
             app:srcCompat="@android:drawable/ic_menu_add" />
 
         <android.support.design.widget.FloatingActionButton
@@ -72,6 +77,8 @@
             android:layout_alignStart="@+id/fab1"
             android:layout_alignTop="@+id/fab1"
             android:layout_gravity="bottom|end"
+            app:backgroundTint="@color/colorPrimary"
+
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
     </RelativeLayout>

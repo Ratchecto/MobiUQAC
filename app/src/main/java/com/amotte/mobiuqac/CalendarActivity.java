@@ -21,7 +21,18 @@ import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.rebillard.mobiuqac.Cours;
+import com.rebillard.mobiuqac.ListeCours;
+import com.rebillard.mobiuqac.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +42,8 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class CalendarActivity extends AppCompatActivity implements WeekView.EventClickListener, WeekView.EmptyViewClickListener, MonthLoader.MonthChangeListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     int annee, mois, jours;
     WeekView mWeekView;
     List<WeekViewEvent> events;
@@ -39,6 +52,11 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     FloatingActionButton fab2 ;
     FloatingActionButton fab3;
     boolean isFABOpen;
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference rootRef;
+    private static ListeCours dbCours= new ListeCours();
+    private User user;
 
     private void showFABMenu(){
         isFABOpen=true;
@@ -145,5 +163,87 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         addEvent.putExtra("int_mois", mois);
         addEvent.putExtra("int_jours", jours);
         startActivity(addEvent);
+    }
+
+    public void addCours(Cours c){
+        Date cur = new Date();
+        Date debut;
+        Date fin;
+        Calendar cal = Calendar.getInstance();
+        ArrayList<Date> l =new ArrayList<>();
+
+        try {
+            debut=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateBeg());
+            fin=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateFinish());
+            cur=debut;
+            cal.setTime(debut);
+            while (cur.compareTo(fin) < 0){
+                //addevent here
+                l.add(cur);
+                cal.add(Calendar.WEEK_OF_MONTH, 1);
+                cur = cal.getTime();
+
+            }
+            Log.e("AddCours",l.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser FirebaseUser = mAuth.getCurrentUser();
+        if (FirebaseUser == null) {
+            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+        else {
+            rootRef = FirebaseDatabase.getInstance().getReference();
+
+            DatabaseReference userRef = rootRef.child("users").child(FirebaseUser.getUid());
+            user = new User("salut");
+            user.addNomCours("Automne 20181ASP100Groupe 11 (CHICOUTIMI SOIR)");
+            userRef.setValue(user);
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User value = dataSnapshot.getValue(User.class);
+                    //mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+
+            DatabaseReference coursRef = rootRef.child("cours");
+            coursRef.addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                dbCours.addCours(dsp.getValue(Cours.class));
+
+                            }
+                            user.updateCours(dbCours.getCoursFromUser(user));
+                            Log.e("ccccd", dbCours.getCoursFromUser(user).get(0).toString());
+                            addCours(dbCours.getCoursBySemester("Automne 2018").get(1));
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
+
+        }
     }
 }
