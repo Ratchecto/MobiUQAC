@@ -18,6 +18,9 @@ public class Cours {
     public String getId(){
         return id;
     }
+    public Cours(){
+
+    }
     public void setId(String id){
         this.id = id;
     }
