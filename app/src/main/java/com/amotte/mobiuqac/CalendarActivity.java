@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -38,8 +39,25 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     WeekView mWeekView;
     List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     Calendar clickedTime;
+    FloatingActionButton fab1;
+    FloatingActionButton fab2 ;
+    FloatingActionButton fab3;
+    boolean isFABOpen;
     Button btnAjoutCours;
 
+    private void showFABMenu(){
+        isFABOpen=true;
+        fab1.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        fab2.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
+        fab3.animate().translationY(-getResources().getDimension(R.dimen.standard_155));
+    }
+
+    private void closeFABMenu(){
+        isFABOpen=false;
+        fab1.animate().translationY(0);
+        fab2.animate().translationY(0);
+        fab3.animate().translationY(0);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +79,20 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             }
         });
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isFABOpen){
+                    showFABMenu();
+                }else{
+                    closeFABMenu();
+                }
+            }
+        });
         // Get a reference for the week view in the layout.
         mWeekView = findViewById(R.id.weekView);
         mWeekView.setAccessibilityLiveRegion(MODE_APPEND);

@@ -25,5 +25,9 @@
     <string name="DateFin">Date de fin</string>
     <string name="Titre">Titre</string>
     <string name="Description">Description</string>
+    <string name="calendar">Calendrier</string>
+    <string name="event">Evénement</string>
+    <string name="about">Profil</string>
+
 
 </resources>
