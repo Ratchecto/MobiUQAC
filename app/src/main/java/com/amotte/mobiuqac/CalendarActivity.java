@@ -8,11 +8,13 @@ import android.content.pm.ResolveInfo;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -58,11 +60,12 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     FloatingActionButton fab2 ;
     FloatingActionButton fab3;
     boolean isFABOpen;
-    Button btnAjoutCours;
 
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     private static ListeCours dbCours= new ListeCours();
+    FirebaseUser FirebaseUser;
+    DatabaseReference userRef;
     private User user;
 
     private void showFABMenu(){
@@ -82,27 +85,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        btnAjoutCours = findViewById(R.id.addCours);
-
-        final Cours coursTest = new Cours();
-        coursTest.setName("Cours de test");
-        coursTest.setDateBeg("18-11-2018");
-        coursTest.setDateFinish("17-12-2018");
-        coursTest.setHourBegin("8:00");
-        coursTest.setHourFinish("19:30");
-
-        btnAjoutCours.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddCours(coursTest);
-            }
-        });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        FloatingActionButton fab =  findViewById(R.id.fab);
+        fab1 =  findViewById(R.id.fab1);
+        fab2 =  findViewById(R.id.fab2);
+        fab3 =  findViewById(R.id.fab3);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,7 +125,30 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 newIntentListDiplay();
             }
         });
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser = mAuth.getCurrentUser();
+        if (FirebaseUser == null) {
+            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+            startActivity(intent);
 
+        }
+        else {
+            rootRef = FirebaseDatabase.getInstance().getReference();
+            userRef = rootRef.child("users");
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User value = dataSnapshot.getValue(User.class);
+                        user = value;
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.w("ccc", "Failed to read value.", error.toException());
+                }
+            });
+        }
     }
 
     private void newIntentListDiplay(){
@@ -150,15 +162,14 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
                 String result=data.getStringExtra("result");
-                //Log.w("result ", result);
                 user.addNomCours(result);
+                userRef.setValue(user);
                 events = new ArrayList<WeekViewEvent>();
                 for(Cours cours : dbCours.getCoursFromUser(user)){
                     addCours2(cours);
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
             }
         }
     }//onActivityResult
@@ -245,7 +256,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         Date fin;
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
-
         ArrayList<Date> l =new ArrayList<>();
 
         try {
@@ -259,25 +269,16 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             while (cur.compareTo(fin) <= 0){
                 Cours cc = new Cours();
                 cc.setName(c.getName());
-
                 DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 String d = dateFormat.format(cur);
                 cc.setDateBeg(d);
-
                 cc.setHourBegin(c.getHourBegin());
                 cc.setHourFinish(c.getHourFinish());
-
-
-                AddCours(cc);
-
-                //AddCours(cal,cal2,c.getName());
-
-
+                   AddCours(cc);
                 l.add(cur);
                 cal.add(Calendar.WEEK_OF_MONTH, 1);
                 cal2.add(Calendar.WEEK_OF_MONTH, 1);
                 cur = cal.getTime();
-
             }
             Log.e("cccc",l.toString());
         } catch (ParseException e) {
@@ -289,60 +290,51 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser FirebaseUser = mAuth.getCurrentUser();
-        if (FirebaseUser == null) {
-            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
-            startActivity(intent);
 
-        }
-        else {
-            rootRef = FirebaseDatabase.getInstance().getReference();
-
-            DatabaseReference userRef = rootRef.child("users").child(FirebaseUser.getUid());
-            user = new User("salut");
-            user.addNomCours("Automne 20181ASP100Groupe 11 (CHICOUTIMI SOIR)");
-            user.addNomCours("Automne 20181BCS107Groupe 01 (CHICOUTIMI JOUR)");
-            userRef.setValue(user);
-
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User value = dataSnapshot.getValue(User.class);
-                    //mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    Log.w(TAG, "Failed to read value.", error.toException());
-                }
-            });
 
             DatabaseReference coursRef = rootRef.child("cours");
+
             coursRef.addListenerForSingleValueEvent(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                                dbCours.addCours(dsp.getValue(Cours.class));
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.e("cccc", "ondatachange");
 
+                                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                    dbCours.addCours(dsp.getValue(Cours.class));
+                                }
+                                    user.updateCours(dbCours.getCoursFromUser(user));
+                                    for (Cours cour : dbCours.getCoursFromUser(user))
 
+                                        addCours2(cour);
                             }
-                            user.updateCours(dbCours.getCoursFromUser(user));
-                            Log.e("ccccd", dbCours.getCoursFromUser(user).get(0).toString());
-                            for (Cours cour: dbCours.getCoursFromUser(user))
-                                addCours2(cour);
-                            //AddCours()
+
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+                                Log.w(TAG, "Failed to read value.", error.toException());
+                            }
+                        });
 
 
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            Log.w(TAG, "Failed to read value.", error.toException());
-                        }
-                    });
-
-        }
     }
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_calendar:
+                    return true;
+                case R.id.navigation_about:
+                    mAuth.signOut();
+                    Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    return true;
+                case R.id.navigation_event:
+                    return true;
+            }
+            return false;
+        }
+    };
 }

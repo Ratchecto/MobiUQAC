@@ -1,15 +1,21 @@
 package com.amotte.mobiuqac;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -28,6 +34,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.rebillard.mobiuqac.User;
+
+import java.util.Calendar;
+import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -37,9 +49,10 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton btGoogle;
     private EditText Email;
     private EditText Password;
+    private TextView twInfo;
     private FirebaseAuth mAuth;
     GoogleApiClient mGoogleApiClient;
-    private static int RC_SIGN_IN = 100;
+    private static int RC_SIGN_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         btSignIn = findViewById(R.id.btSignIn);
         btSignUp = findViewById(R.id.btSignUp);
         btGoogle = findViewById(R.id.googleSignin);
+        twInfo = findViewById(R.id.tw_info) ;
 
         Email = findViewById(R.id.emailinput);
         Password = findViewById(R.id.passwordinput);
@@ -65,54 +79,73 @@ public class LoginActivity extends AppCompatActivity {
         btSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                twInfo.setVisibility(View.INVISIBLE);
                 String email = Email.getText().toString();
                 String pass = Password.getText().toString();
-                if (!emptyValidation()) {
-                    mAuth.createUserWithEmailAndPassword(email,pass)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                if (isEmailValid()) {
+                    if (isPasswordalid()){
+                        mAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
+                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                    mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).setValue(new User(mAuth.getCurrentUser().getEmail()));
 
+
+                                    twInfo.setText(R.string.user_created);
+                                    twInfo.setTextColor(getResources().getColor(R.color.colorWhite));
+                                    twInfo.setVisibility(View.VISIBLE);
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"Email/Mot de passe incorrects ou introuvable",Toast.LENGTH_SHORT).show();
+                                    twInfo.setText(R.string.error_email_exist);
+                                    twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                                    twInfo.setVisibility(View.VISIBLE);
                                 }
                             }
                         });
-                    Toast.makeText(LoginActivity.this, "Added User", Toast.LENGTH_SHORT).show();
-                    Password.setText("");
+                    }else {
+                        twInfo.setText(R.string.error_invalid_password);
+                        twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                        twInfo.setVisibility(View.VISIBLE);
+                    }
                 }else{
-                    Toast.makeText(LoginActivity.this, "Empty Fields", Toast.LENGTH_SHORT).show();
+                    twInfo.setText(R.string.error_invalid_email);
+                    twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                    twInfo.setVisibility(View.VISIBLE);
                 }
             }
         });
         btSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                twInfo.setVisibility(View.INVISIBLE);
                 String email = Email.getText().toString();
                 String pass = Password.getText().toString();
-
-                if (!emptyValidation()) {
-                    mAuth.signInWithEmailAndPassword(email, pass)
+                if (isEmailValid()) {
+                    if (isPasswordalid()){
+                        mAuth.signInWithEmailAndPassword(email, pass)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(getApplicationContext(), "Authentication réussie !",
-                                                Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));finish();
+                                        startActivity(new Intent(getApplicationContext(),CalendarActivity.class));finish();
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Email ou mot de passe incorrect.",
-                                                Toast.LENGTH_SHORT).show();
+                                        twInfo.setText(R.string.error_incorrect_password);
+                                        twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                                        twInfo.setVisibility(View.VISIBLE);
                                     }
-
-                                    // ...
                                 }
-                            });
+                        });
+                    }else {
+                        twInfo.setText(R.string.error_invalid_password);
+                        twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                        twInfo.setVisibility(View.VISIBLE);
+                    }
                 }else{
-                    Toast.makeText(LoginActivity.this, "Remplissez tous les champs", Toast.LENGTH_SHORT).show();
+                    twInfo.setText(R.string.error_invalid_email);
+                    twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                    twInfo.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -122,12 +155,15 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private boolean emptyValidation() {
-        if (TextUtils.isEmpty(Email.getText().toString()) || TextUtils.isEmpty(Password.getText().toString())) {
+
+    boolean isEmailValid() {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(Email.getText().toString()).matches();
+    }
+    boolean isPasswordalid() {
+        if (Password.getText().toString().length() >= 6){
             return true;
-        }else {
-            return false;
         }
+        return false;
     }
     public void configureSignIn(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -148,29 +184,20 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        Toast.makeText(getApplicationContext(),"start intent sign in",Toast.LENGTH_SHORT).show();
-
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
-                Toast.makeText(getApplicationContext(),"sign in success",Toast.LENGTH_SHORT).show();
-
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Toast.makeText(getApplicationContext(),"failed",Toast.LENGTH_SHORT).show();
-
-                // ...
             }
         }
     }
@@ -182,10 +209,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(getApplicationContext(),"Authentifié",Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));finish();
+                            startActivity(new Intent(getApplicationContext(),CalendarActivity.class));finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(getApplicationContext(),"Raté :( ",Toast.LENGTH_SHORT).show();
@@ -195,4 +220,5 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }

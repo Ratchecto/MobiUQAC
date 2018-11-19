@@ -8,12 +8,12 @@
     <string name="title_activity_ajouter_event">Ajouter un evenement</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Mot de Passe</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_email">Email invalide !</string>
+    <string name="error_invalid_password">Le mot de passe doit contenir au moins 6 caractères</string>
+    <string name="error_incorrect_password">Email ou mot de passe incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
@@ -27,7 +27,12 @@
     <string name="Description">Description</string>
     <string name="calendar">Calendrier</string>
     <string name="event">Evénement</string>
-    <string name="about">Profil</string>
+    <string name="about">Déconnection</string>
+    <string name="img_uqac">Image batiment H</string>
+    <string name="or">OU</string>
+    <string name="user_created">Inscription réussie !</string>
+    <string name="error_email_exist">Email déjà inscrit !</string>
+
 
 
 </resources>

@@ -14,6 +14,7 @@
     <item
         android:id="@+id/navigation_about"
         android:icon="@drawable/ic_profil"
+
         android:title="@string/about" />
 
 </menu>
