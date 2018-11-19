@@ -11,8 +11,6 @@ public class ListeCours {
     public void addCours (Cours cour){
         dbCours.put(cour.getSemestre()+cour.getIdentifiant()+cour.getGroup(),cour);
 
-        Log.e("cccc","---"+cour.getSemestre()+cour.getIdentifiant()+cour.getGroup()+"---");
-
     }
     public ArrayList<Cours> getCoursFromUser(User user){
         ArrayList<Cours> userCours= new ArrayList<>();

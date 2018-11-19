@@ -7,8 +7,9 @@ public class Cours {
     private String name = "";
     private String group = "";
     private String day = "";
-    private String hourBegin = "";
     private String hourFinish = "";
+    private String hourBegin = "";
+
     private String dateBeg = "";
     private String dateFinish = "";
     private String local = "";
@@ -66,10 +67,10 @@ public class Cours {
     public void setDay(String day) {
         this.day = day;
     }
-    public String getHourBeg() {
+    public String getHourBegin() {
         return hourBegin;
     }
-    public void setHourBeg(String hourBeg) {
+    public void setHourBegin(String hourBeg) {
         this.hourBegin = hourBeg;
     }
     public String getHourFinish() {
