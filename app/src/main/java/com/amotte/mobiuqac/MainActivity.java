@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rebillard.mobiuqac.Cours;
+import com.rebillard.mobiuqac.ListeCours;
 import com.rebillard.mobiuqac.User;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
-    private ArrayList<Cours> dbCours= new ArrayList<>(); // ya tout les cours ici
-    public int i =0;
+    private ListeCours dbCours= new ListeCours(); // ya tout les cours ici
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -42,15 +42,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_calendar:
                     Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
                     startActivity(intent);
                     return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                case R.id.navigation_about:
+                    return true;
+                case R.id.navigation_event:
                     return true;
             }
             return false;
@@ -86,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             DatabaseReference userRef = rootRef.child("Users").child(FirebaseUser.getUid());
-            User user = new User();
-            user.addCours("cc");
-            user.addCours("ouiiii");
+            final User user = new User();
             userRef.setValue(user);
 
             userRef.addValueEventListener(new ValueEventListener() {
@@ -100,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    // Failed to read value
                     Log.w(TAG, "Failed to read value.", error.toException());
                 }
             });
@@ -110,23 +105,19 @@ public class MainActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Cours value = dataSnapshot.getValue(Cours.class);
-                        i= i+1;
-                        //dbCours.add(value);
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                            dbCours.add(dsp.getValue(Cours.class)); //add result into array list
+                            dbCours.addCours(dsp.getValue(Cours.class));
                         }
-
+                        user.updateCours(dbCours.getCoursFromUser(user));
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
+                    public void onCancelled(DatabaseError error) {
+                        Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });
         }
     }
-
 
 
 }
