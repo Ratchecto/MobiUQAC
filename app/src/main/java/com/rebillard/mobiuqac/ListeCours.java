@@ -1,15 +1,18 @@
 package com.rebillard.mobiuqac;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ListeCours {
     private HashMap<String,Cours> dbCours= new HashMap<>();
-    private ArrayList<Cours> allCours = new ArrayList<Cours>();
 
     public void addCours (Cours cour){
         dbCours.put(cour.getSemestre()+cour.getIdentifiant()+cour.getGroup(),cour);
-        allCours.add(cour);
+
+        Log.e("cccc","---"+cour.getSemestre()+cour.getIdentifiant()+cour.getGroup()+"---");
+
     }
     public ArrayList<Cours> getCoursFromUser(User user){
         ArrayList<Cours> userCours= new ArrayList<>();
@@ -18,6 +21,10 @@ public class ListeCours {
         }
         return userCours;
     }
+    public Cours gettest() {
+        ArrayList<Cours> userCours = new ArrayList<>();
+        return dbCours.get(dbCours.keySet().iterator().next());
+    }
     public ArrayList<Cours> getCoursBySemester(String sem){
         ArrayList<Cours> userCours= new ArrayList<>();
         for( Cours cours : dbCours.values()){
@@ -25,9 +32,6 @@ public class ListeCours {
                 userCours.add(cours);
         }
         return userCours;
-    }
-    public ArrayList<Cours> getAllCours(){
-        return allCours;
     }
 
 }

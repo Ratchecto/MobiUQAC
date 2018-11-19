@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,25 +21,47 @@ import android.widget.Toast;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.WeekViewLoader;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.rebillard.mobiuqac.Cours;
+import com.rebillard.mobiuqac.ListeCours;
+import com.rebillard.mobiuqac.User;
+import com.rebillard.mobiuqac.Cours;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class CalendarActivity extends AppCompatActivity implements WeekView.EventClickListener, WeekView.EmptyViewClickListener, MonthLoader.MonthChangeListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     int annee, mois, jours;
     WeekView mWeekView;
-    List<WeekViewEvent> events;
+    List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     Calendar clickedTime;
     FloatingActionButton fab1;
     FloatingActionButton fab2 ;
     FloatingActionButton fab3;
     boolean isFABOpen;
+    Button btnAjoutCours;
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference rootRef;
+    private static ListeCours dbCours= new ListeCours();
+    private User user;
 
     private void showFABMenu(){
         isFABOpen=true;
@@ -57,6 +80,22 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        btnAjoutCours = findViewById(R.id.addCours);
+
+        final Cours coursTest = new Cours();
+        coursTest.setName("Cours de test");
+        coursTest.setDateBeg("18-11-2018");
+        coursTest.setDateFinish("17-12-2018");
+        coursTest.setHourBeg("8:00");
+        coursTest.setHourFinish("9:30");
+
+        btnAjoutCours.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddCours(coursTest);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
@@ -89,44 +128,11 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOnEventClickListener(this);
 
-        //CalendarView cal = (CalendarView) findViewById(R.id.calendar); // get the reference of CalendarView
-
-        /*cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                annee = year;
-                mois = month;
-                jours = dayOfMonth;
-                // display the selected date by using a toast
-                Toast.makeText(getApplicationContext(), dayOfMonth + "/" + (month+=1) + "/" + year, Toast.LENGTH_LONG).show();
-            }
-        });*/
-
     }
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-        //Toast.makeText(this, "newMonth: "+newMonth+"  newYear: "+newYear, Toast.LENGTH_SHORT).show();
-
-        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-        Calendar startTime = Calendar.getInstance();
-
-        // All day event until 00:00 next day
-        startTime = Calendar.getInstance();
-        startTime.set(Calendar.DAY_OF_MONTH, 10);
-        startTime.set(Calendar.HOUR_OF_DAY, 0);
-        startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.SECOND, 0);
-        startTime.set(Calendar.MILLISECOND, 0);
-        startTime.set(Calendar.MONTH, newMonth-1);
-        startTime.set(Calendar.YEAR, newYear);
-        Calendar endTime = (Calendar) startTime.clone();
-        endTime.set(Calendar.DAY_OF_MONTH, 11);
-        /*WeekViewEvent event = new WeekViewEvent(8, getEventTitle(startTime), null, startTime, endTime, true);
-        event.setColor(getResources().getColor(R.color.colorPrimary));
-        events.add(event);*/
-
-        return events;
+                return events;
     }
     public void onEmptyViewClicked(final Calendar time) {
         clickedTime=(Calendar) time.clone();
@@ -139,11 +145,115 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     }
 
-    public void AddEvent(View v){
-        Intent addEvent = new Intent(CalendarActivity.this, AjouterEventActivity.class);
-        addEvent.putExtra("int_annee", annee);
-        addEvent.putExtra("int_mois", mois);
-        addEvent.putExtra("int_jours", jours);
-        startActivity(addEvent);
+    public List<? extends WeekViewEvent> AddCours(Cours c){
+
+        String[] dateDebCours = c.getDateBeg().split("-");
+        String[] dateFinCours = c.getDateFinish().split("-");
+        String[] heureDeb = c.getHourBeg().split(":");
+        String[] heureFin = c.getHourFinish().split(":");
+
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateDebCours[0]));
+        startTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(heureDeb[0]));
+        startTime.set(Calendar.MINUTE, Integer.parseInt(heureDeb[1]));
+        startTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
+        startTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
+        Calendar endTime = (Calendar) startTime.clone();
+        endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateDebCours[0]));
+        endTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(heureFin[0]));
+        endTime.set(Calendar.MINUTE, Integer.parseInt(heureFin[1]));
+        endTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
+        endTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
+        WeekViewEvent event = new WeekViewEvent (1, c.getName(), startTime, endTime);
+        event.setColor(getResources().getColor(R.color.colorPrimary));
+
+        events.add(event);
+        mWeekView.notifyDatasetChanged();
+
+        Toast.makeText(this, "Cours ajouté : " + c.getName(), Toast.LENGTH_LONG).show();
+
+        return events;
+    }
+
+    public void addCours2(Cours c){
+        Date cur = new Date();
+        Date debut;
+        Date fin;
+        Calendar cal = Calendar.getInstance();
+        ArrayList<Date> l =new ArrayList<>();
+
+        try {
+            debut=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateBeg());
+            fin=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateFinish());
+            cur=debut;
+            cal.setTime(debut);
+            while (cur.compareTo(fin) < 0){
+                //addevent here
+                l.add(cur);
+                cal.add(Calendar.WEEK_OF_MONTH, 1);
+                cur = cal.getTime();
+
+            }
+            Log.e("AddCours",l.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser FirebaseUser = mAuth.getCurrentUser();
+        if (FirebaseUser == null) {
+            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+        else {
+            rootRef = FirebaseDatabase.getInstance().getReference();
+
+            DatabaseReference userRef = rootRef.child("users").child(FirebaseUser.getUid());
+            user = new User("salut");
+            user.addNomCours("Automne 20181ASP100Groupe 11 (CHICOUTIMI SOIR)");
+            userRef.setValue(user);
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User value = dataSnapshot.getValue(User.class);
+                    //mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+
+            DatabaseReference coursRef = rootRef.child("cours");
+            coursRef.addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                dbCours.addCours(dsp.getValue(Cours.class));
+
+                            }
+                            user.updateCours(dbCours.getCoursFromUser(user));
+                            Log.e("ccccd", dbCours.getCoursFromUser(user).get(0).toString());
+                            addCours2(dbCours.getCoursBySemester("Automne 2018").get(1));
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
+
+        }
     }
 }

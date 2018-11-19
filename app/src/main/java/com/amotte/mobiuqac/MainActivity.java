@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
-    private ListeCours dbCours= new ListeCours(); // ya tout les cours ici
+    private ListeCours dbCours= new ListeCours();
+    private User user;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -78,13 +79,8 @@ public class MainActivity extends AppCompatActivity {
         else {
             rootRef = FirebaseDatabase.getInstance().getReference();
 
-            final TextView mTextMessage2 = (TextView) findViewById(R.id.message2);
-            mTextMessage2.setText(FirebaseUser.getEmail());
-
-
-
             DatabaseReference userRef = rootRef.child("Users").child(FirebaseUser.getUid());
-            final User user = new User();
+            user = new User();
             userRef.setValue(user);
 
             userRef.addValueEventListener(new ValueEventListener() {
