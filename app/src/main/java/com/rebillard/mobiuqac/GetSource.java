@@ -1,7 +1,9 @@
 package com.rebillard.mobiuqac;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -11,25 +13,30 @@ public class GetSource {
      * Permet d'obtenir le code source d'une page web
      *
      * @param sUrl (String)
-     * @return code surce (String)
+     * @return code source (String)
      * @throws Exception
      */
     public static String getCode(String sUrl) throws Exception {
 
         URL url = new URL(sUrl);
-        URLConnection connection = url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        InputStream in = connection.getInputStream();
+
+        InputStreamReader isw = new InputStreamReader(in);
+
         String codeSource = "", line = "";
 
-        // Creation du buffer de connection
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                connection.getInputStream()));
-
-        // Boucle pour lire les lignes du html
-        while ((line = in.readLine()) != null) {
-            codeSource += line + '\n';
-
+        int data = isw.read();
+        while (data != -1) {
+            char current = (char) data;
+            codeSource += current;
+            data = isw.read();
         }
+
+
         return codeSource;
     }
+
 
 }

@@ -5,9 +5,11 @@ import java.util.HashMap;
 
 public class ListeCours {
     private HashMap<String,Cours> dbCours= new HashMap<>();
+    private ArrayList<Cours> allCours = new ArrayList<Cours>();
 
     public void addCours (Cours cour){
         dbCours.put(cour.getSemestre()+cour.getIdentifiant()+cour.getGroup(),cour);
+        allCours.add(cour);
     }
     public ArrayList<Cours> getCoursFromUser(User user){
         ArrayList<Cours> userCours= new ArrayList<>();
@@ -23,6 +25,9 @@ public class ListeCours {
                 userCours.add(cours);
         }
         return userCours;
+    }
+    public ArrayList<Cours> getAllCours(){
+        return allCours;
     }
 
 }
