@@ -1,5 +1,6 @@
 package com.amotte.mobiuqac;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -128,7 +129,38 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOnEventClickListener(this);
 
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newIntentListDiplay();
+            }
+        });
+
     }
+
+    private void newIntentListDiplay(){
+        Intent i = new Intent(this, ListDisplay.class);
+        startActivityForResult(i, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("result");
+                //Log.w("result ", result);
+                user.addNomCours(result);
+                events = new ArrayList<WeekViewEvent>();
+                for(Cours cours : dbCours.getCoursFromUser(user)){
+                    addCours2(cours);
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {

@@ -1,5 +1,6 @@
 package com.amotte.mobiuqac;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +26,7 @@ import com.rebillard.mobiuqac.ListeCours;
 
 import java.util.ArrayList;
 
-public class ListDisplay extends AppCompatActivity {
+public class ListDisplay extends Activity {
     // Array of strings...
     private String[] arraySem = {"Automne 2018", "Hiver 2019", "Été 2019"};
     String[] exemple = {};
@@ -63,7 +64,6 @@ public class ListDisplay extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.w("", "test1" );
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                            Log.w("", "test" + dsp.getValue(Cours.class).toString());
                             dbCours.addCours(dsp.getValue(Cours.class));
                         }
                     }
@@ -91,9 +91,9 @@ public class ListDisplay extends AppCompatActivity {
                 ad.notifyDataSetChanged();
                 all.clear();
                 for (Cours cours : allCours) {
-                    a.add(cours.getIdentifiant() + " " + cours.getGroup());
+                    a.add(cours.getIdentifiant() + cours.getGroup());
                     ad.notifyDataSetChanged();
-                    all.add(cours.getIdentifiant() + " " + cours.getGroup());
+                    all.add(cours.getIdentifiant() + cours.getGroup());
                 }
             }
 
@@ -109,6 +109,11 @@ public class ListDisplay extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 
+                Intent data = new Intent();
+                data.putExtra("result", spinner.getSelectedItem().toString()
+                         + listView.getItemAtPosition(position).toString());
+                setResult(Activity.RESULT_OK, data);
+                finish();
             }
         });
 
