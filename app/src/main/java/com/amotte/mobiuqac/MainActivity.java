@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,12 +24,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.rebillard.mobiuqac.Cours;
 import com.rebillard.mobiuqac.User;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextMessage;
     private FirebaseAuth mAuth;
-    DatabaseReference rootRef;
+    private DatabaseReference rootRef;
+    private ArrayList<Cours> dbCours= new ArrayList<>();
+    public int i =0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -40,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    Intent intent = new Intent(MainActivity.this, CalendarActivity.class);
+                    startActivity(intent);
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
@@ -73,30 +80,22 @@ public class MainActivity extends AppCompatActivity {
         else {
             rootRef = FirebaseDatabase.getInstance().getReference();
 
-            TextView mTextMessage2 = (TextView) findViewById(R.id.message2);
+            final TextView mTextMessage2 = (TextView) findViewById(R.id.message2);
             mTextMessage2.setText(FirebaseUser.getEmail());
 
 
 
             DatabaseReference userRef = rootRef.child("Users").child(FirebaseUser.getUid());
-            DatabaseReference cours = rootRef.child("Cours");
             User user = new User();
             user.addCours("cc");
             user.addCours("ouiiii");
-            mTextMessage2.setText(user.getCours().toString());
             userRef.setValue(user);
 
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User value = dataSnapshot.getValue(User.class);
-                    TextView mTextMessage3 = (TextView) findViewById(R.id.message3);
-                    for( String cour : value.getCours()){
-                        //FirebaseDatabase db =
-                        //        rootRef.child("Cours");
-
-                    }
-                    mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
+                    //mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
                 }
 
                 @Override
@@ -106,6 +105,26 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            DatabaseReference coursRef = rootRef.child("cours");
+
+            coursRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Cours value = dataSnapshot.getValue(Cours.class);
+                        i= i+1;
+                        //dbCours.add(value);
+                        for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                            dbCours.add(dsp.getValue(Cours.class)); //add result into array list
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
         }
     }
 
