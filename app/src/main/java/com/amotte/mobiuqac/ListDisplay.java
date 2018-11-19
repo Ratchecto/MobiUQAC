@@ -3,7 +3,6 @@ package com.amotte.mobiuqac;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +47,9 @@ public class ListDisplay extends Activity {
         EditText editCours = (EditText) findViewById(R.id.editCours);
 
 
+        ad = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, a);
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser FirebaseUser = mAuth.getCurrentUser();
         if (FirebaseUser == null) {
@@ -66,6 +68,15 @@ public class ListDisplay extends Activity {
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                             dbCours.addCours(dsp.getValue(Cours.class));
                         }
+                        ArrayList<Cours> allCours = dbCours.getCoursBySemester(spinner.getSelectedItem().toString());
+                        a.clear();
+                        ad.notifyDataSetChanged();
+                        all.clear();
+                        for (Cours cours : allCours) {
+                            a.add(cours.getIdentifiant() + cours.getGroup());
+                            ad.notifyDataSetChanged();
+                            all.add(cours.getIdentifiant() + cours.getGroup());
+                        }
                     }
 
                     @Override
@@ -77,8 +88,6 @@ public class ListDisplay extends Activity {
 
         spinner.setAdapter(new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, arraySem));
-        ad = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, a);
 
         listView.setAdapter(ad);
 

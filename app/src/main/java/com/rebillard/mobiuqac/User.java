@@ -16,6 +16,7 @@ public class User {
     public void removeCours(Cours cours){
         this.cours.remove(cours);
     }
+    public void removeNomCours(String nom) { this.nomCours.remove(nom); }
 
     public ArrayList<Cours> getCours(){
         return cours;
@@ -26,6 +27,9 @@ public class User {
 
     public void updateCours(ArrayList<Cours> cours){
         this.cours = cours;
+        for(Cours c : cours){
+            addNomCours(c.getSemestre() + c.getIdentifiant() + c.getGroup());
+        }
     }
 
 

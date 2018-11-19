@@ -50,7 +50,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    int annee, mois, jours;
     WeekView mWeekView;
     List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     Calendar clickedTime;
@@ -137,11 +136,23 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             }
         });
 
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newIntentRemoveCours();
+            }
+        });
+
     }
 
     private void newIntentListDiplay(){
         Intent i = new Intent(this, ListDisplay.class);
         startActivityForResult(i, 1);
+    }
+
+    private void newIntentRemoveCours(){
+        Intent i = new Intent(this, RemoveCours.class);
+        startActivity(i);
     }
 
     @Override
