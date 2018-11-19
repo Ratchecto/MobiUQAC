@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
-    private ArrayList<Cours> dbCours= new ArrayList<>();
+    private ArrayList<Cours> dbCours= new ArrayList<>(); // ya tout les cours ici
     public int i =0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
             });
 
             DatabaseReference coursRef = rootRef.child("cours");
-
             coursRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
