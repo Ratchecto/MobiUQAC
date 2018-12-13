@@ -2,6 +2,7 @@ package com.amotte.mobiuqac;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -11,6 +12,7 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -146,18 +149,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("result");
-                user.addNomCours(result);
-                userRef.setValue(user);
+        String result=data.getStringExtra("result");
+        user.addNomCours(result);
+        userRef.setValue(user);
 
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
+        update();
+        this.recreate();
 
-            }
-            this.recreate();
-        }
 
     }
     //onActivityResult
@@ -200,7 +198,31 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        /*String name = event.getName();
+        String location  = event.getLocation();
+        Calendar dateDebut = event.getStartTime();
+        Calendar dateFin = event.getEndTime();
 
+        String[] date1 = dateDebut.getTime().toString().split(" ");
+        String[] date2 = dateFin.getTime().toString().split(" ");
+
+        Context context = getApplicationContext();
+        CharSequence text = name + ",  " + location + ". Du " + date1[2] + " " + date1[1] + " " + date1[5] + " au "
+                + date2[2] + " " + date2[1] + " " + date2[5];
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();*/
+
+        for (Cours cour : dbCours.getCoursFromUser(user)){
+            if(cour != null){
+                if(cour.getName().equals(event.getName())) {
+                    Intent i = new Intent(this, ShowCours.class);
+                    i.putExtra("cours", cour.toString());
+                    startActivity(i);
+                }
+            }
+        }
     }
 
     public List<? extends WeekViewEvent> AddCours(Cours c){
@@ -353,12 +375,15 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
     public void update(){
         if (user != null){
-        user.updateCours(dbCours.getCoursFromUser(user));
-            events= new ArrayList<WeekViewEvent>();
+            if(dbCours.getCoursFromUser(user) != null) {
+                user.updateCours(dbCours.getCoursFromUser(user));
+                events = new ArrayList<WeekViewEvent>();
 
-            for (Cours cour : dbCours.getCoursFromUser(user))
-
-            addCours2(cour);
+                for (Cours cour : dbCours.getCoursFromUser(user)) {
+                    if(cour != null)
+                        addCours2(cour);
+                }
+            }
 
         }else{
             userRef.setValue(new User(FirebaseUser.getEmail()));
