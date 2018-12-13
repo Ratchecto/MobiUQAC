@@ -65,7 +65,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     private static ListeCours dbCours= new ListeCours();
     FirebaseUser FirebaseUser;
     DatabaseReference userRef;
-    private User user;
+    private static User user;
 
     private void showFABMenu(){
         isFABOpen=true;
@@ -130,30 +130,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 newIntentRemoveCours();
             }
         });
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser = mAuth.getCurrentUser();
-        if (FirebaseUser == null) {
-            Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
-            startActivity(intent);
 
-        }
-        else {
-            rootRef = FirebaseDatabase.getInstance().getReference();
-            userRef = rootRef.child("users");
-
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User value = dataSnapshot.getValue(User.class);
-                        user = value;
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    Log.w("ccc", "Failed to read value.", error.toException());
-                }
-            });
-        }
     }
 
     private void newIntentListDiplay(){
@@ -163,7 +140,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     private void newIntentRemoveCours(){
         Intent i = new Intent(this, RemoveCours.class);
-        startActivity(i);
+        startActivityForResult(i,1);
     }
 
     @Override
@@ -174,15 +151,17 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 String result=data.getStringExtra("result");
                 user.addNomCours(result);
                 userRef.setValue(user);
-                events = new ArrayList<WeekViewEvent>();
-                for(Cours cours : dbCours.getCoursFromUser(user)){
-                    addCours2(cours);
-                }
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
+
             }
+            update();
+            this.recreate();
         }
-    }//onActivityResult
+
+    }
+    //onActivityResult
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int year, int month) {
@@ -300,33 +279,54 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     @Override
     protected void onStart() {
         super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser = mAuth.getCurrentUser();
+        if (FirebaseUser == null) {
+                Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+                startActivity(intent);
+
+            }
+            else {
+                rootRef = FirebaseDatabase.getInstance().getReference();
+                userRef = rootRef.child("users").child(FirebaseUser.getUid());
+
+                userRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User value = dataSnapshot.getValue(User.class);
+                        user = value;
+                        update();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.w("ccc", "Failed to read value.", error.toException());
+                    }
+                });
 
 
             DatabaseReference coursRef = rootRef.child("cours");
 
             coursRef.addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Log.e("cccc", "ondatachange");
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.e("cccc", "ondatachange");
 
-                                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                                    dbCours.addCours(dsp.getValue(Cours.class));
-                                }
-                                    user.updateCours(dbCours.getCoursFromUser(user));
-                                    for (Cours cour : dbCours.getCoursFromUser(user))
-
-                                        addCours2(cour);
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                dbCours.addCours(dsp.getValue(Cours.class));
                             }
+                            update();
+                        }
 
-                            @Override
-                            public void onCancelled(DatabaseError error) {
-                                Log.w(TAG, "Failed to read value.", error.toException());
-                            }
-                        });
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
 
 
-
+        }
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -347,4 +347,17 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             return false;
         }
     };
+    public static User getUser(){
+        return user;
+    }
+    public void update(){
+        if (user != null){
+        user.updateCours(dbCours.getCoursFromUser(user));
+            events= new ArrayList<WeekViewEvent>();
+
+            for (Cours cour : dbCours.getCoursFromUser(user))
+
+            addCours2(cour);
+    }   }
+
 }

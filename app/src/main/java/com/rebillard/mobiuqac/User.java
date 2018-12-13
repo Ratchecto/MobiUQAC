@@ -10,7 +10,8 @@ public class User {
 
     public void addCours(Cours cours){this.cours.add(cours); }
     public void addNomCours (String cours){
-        this.nomCours.add(cours);
+        if(!nomCours.contains(cours))
+            this.nomCours.add(cours);
     }
 
     public void removeCours(Cours cours){

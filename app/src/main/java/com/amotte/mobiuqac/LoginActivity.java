@@ -88,8 +88,23 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                                    mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).setValue(new User(mAuth.getCurrentUser().getEmail()));
+                                    mAuth.signInWithEmailAndPassword(Email.getText().toString(),Password.getText().toString())
+                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                                    if (task.isSuccessful()) {
+                                                        FirebaseUser user = mAuth.getCurrentUser();
+                                                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                                        mDatabase.child("users").child(user.getUid()).setValue(new User(user.getEmail()));
+                                                        startActivity(new Intent(getApplicationContext(),CalendarActivity.class));finish();
+                                                    } else {
+                                                        twInfo.setText(R.string.error_incorrect_password);
+                                                        twInfo.setTextColor(getResources().getColor(R.color.colorRed));
+                                                        twInfo.setVisibility(View.VISIBLE);
+                                                    }
+                                                }
+                                            });
+
 
 
                                     twInfo.setText(R.string.user_created);
@@ -210,7 +225,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(getApplicationContext(),CalendarActivity.class));finish();
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            mDatabase.child("users").child(user.getUid()).setValue(new User(user.getEmail()));
+                            startActivity(new Intent(getApplicationContext(),CalendarActivity.class));
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(getApplicationContext(),"Raté :( ",Toast.LENGTH_SHORT).show();

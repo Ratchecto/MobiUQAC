@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class RemoveCours extends Activity {
     private ListView listCours;
     private DatabaseReference userRef;
-    private User user;
+    private User user=CalendarActivity.getUser();
     private ListeCours dbCours= new ListeCours();
     private FirebaseAuth mAuth;
     private ArrayList<String> name = new ArrayList<String>();
@@ -51,40 +51,7 @@ public class RemoveCours extends Activity {
         }
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
 
-        userRef = rootRef.child("Users").child(FirebaseUser.getUid());
-        user = new User();
-        userRef.setValue(user);
-
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User value = dataSnapshot.getValue(User.class);
-                //mTextMessage3.setText("------"+value.getCours().get(0)+"---------");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w("", "Failed to read value.", error.toException());
-            }
-        });
-
-        DatabaseReference coursRef = rootRef.child("cours");
-        coursRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                            dbCours.addCours(dsp.getValue(Cours.class));
-                        }
-                        user.updateCours(dbCours.getCoursFromUser(user));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        Log.w("", "Failed to read value.", error.toException());
-                    }
-                });
-
+        userRef = rootRef.child("users").child(FirebaseUser.getUid());
 
         ArrayList<String> allCours = user.getNomCours();
 
@@ -96,10 +63,15 @@ public class RemoveCours extends Activity {
         listCours.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
+
+                Intent datas = new Intent();
+                datas.putExtra("result", "cc");
+
+
                 String data = listCours.getItemAtPosition(position).toString();
                 user.removeNomCours(data);
                 userRef.setValue(user);
-                setResult(Activity.RESULT_OK);
+                setResult(Activity.RESULT_CANCELED, datas);
                 finish();
             }
         });
