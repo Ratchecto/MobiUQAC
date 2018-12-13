@@ -35,6 +35,7 @@
             </intent-filter>
 
 
+
         </activity>
         <activity
             android:name=".ListDisplay"
@@ -51,6 +52,9 @@
         <activity
             android:name=".RemoveCours"
             android:label="Supprimer un cours">
+
+        </activity>
+        <activity android:name=".Event_frag" >
 
         </activity>
 

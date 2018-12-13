@@ -156,7 +156,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             if (resultCode == Activity.RESULT_CANCELED) {
 
             }
-            update();
             this.recreate();
         }
 
@@ -342,6 +341,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     startActivity(intent);
                     return true;
                 case R.id.navigation_event:
+                    Intent intent2 = new Intent(CalendarActivity.this, Event_frag.class);
+                    startActivity(intent2);
                     return true;
             }
             return false;
