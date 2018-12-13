@@ -286,7 +286,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 startActivity(intent);
 
             }
-            else {
+        else {
                 rootRef = FirebaseDatabase.getInstance().getReference();
                 userRef = rootRef.child("users").child(FirebaseUser.getUid());
 
@@ -358,6 +358,12 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             for (Cours cour : dbCours.getCoursFromUser(user))
 
             addCours2(cour);
-    }   }
+
+        }else{
+            userRef.setValue(new User(FirebaseUser.getEmail()));
+        }
+    }
+
+
 
 }

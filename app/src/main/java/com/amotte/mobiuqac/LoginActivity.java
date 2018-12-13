@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("users").child(user.getUid()).setValue(new User(user.getEmail()));
+                            //mDatabase.child("users").child(user.getUid()).setValue(new User(user.getEmail()));
                             startActivity(new Intent(getApplicationContext(),CalendarActivity.class));
                             finish();
                         } else {
