@@ -29,7 +29,8 @@ public class User {
     public void updateCours(ArrayList<Cours> cours){
         this.cours = cours;
         for(Cours c : cours){
-            addNomCours(c.getSemestre() + c.getIdentifiant() + c.getGroup());
+            if(c != null)//Reglage provisoire
+                addNomCours(c.getSemestre() + c.getIdentifiant() + c.getGroup());
         }
     }
 

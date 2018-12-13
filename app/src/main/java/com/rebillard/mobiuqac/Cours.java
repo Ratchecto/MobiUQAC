@@ -88,7 +88,7 @@ public class Cours {
 
     @Override
     public String toString() {
-        return "Cours [id =" + id + ", name =" + name + ", semeste= " + semestre
+        return "Cours [id =" + id + ", identifiant =" + identifiant + ", name =" + name + ", semeste= " + semestre
                 + ", group=" + group + ", day=" + day + ", hourBeg="
                 + hourBegin + ", hourFinish=" + hourFinish + ", dateBeg="
                 + dateBeg + ", dateFinish=" + dateFinish + ", local=" + local
