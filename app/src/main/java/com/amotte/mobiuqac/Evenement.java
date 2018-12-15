@@ -7,7 +7,15 @@ public class Evenement {
     private String thumbnail;
     private String description;
     private Date date;
+    public Evenement(String nom, Date d, String des, String img){
+        title= nom;
+        thumbnail= img;
+        date = d;
+        description = des;
+    }
+    public Evenement(){
 
+    }
     public String getTitle() {
         return title;
     }
