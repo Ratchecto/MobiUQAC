@@ -3,7 +3,7 @@ package com.amotte.mobiuqac;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class AjouterEventActivity extends AppCompatActivity {
+public class Add_Event_Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
