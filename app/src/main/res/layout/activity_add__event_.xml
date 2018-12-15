@@ -56,13 +56,14 @@
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="takePhoto"
+        android:onClick="startDialog"
         android:text="Photos" />
 
     <ImageView
         android:id="@+id/imagatest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:onClick="startDialog"/>
 
 </LinearLayout>

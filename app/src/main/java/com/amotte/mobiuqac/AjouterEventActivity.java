@@ -3,11 +3,14 @@ package com.amotte.mobiuqac;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,19 +26,22 @@ import java.util.Date;
 
 public class AjouterEventActivity extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 100;
-    File destination;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private int SELECT_IMAGE = 0;
 
-    private int SELECT_IMAGE = 1;
-
-    private TextView test;
+    ImageView imageView ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add__event_);
 
-        test = (TextView) findViewById(R.id.title);
+        imageView = (ImageView) findViewById(R.id.imagatest);
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
+        imageView.setImageBitmap(imageBitmap);
+
+        imageView.getLayoutParams().height = 300;
+        imageView.getLayoutParams().width = 300;
 
     }
 
@@ -53,6 +59,36 @@ public class AjouterEventActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
+    public void startDialog(View view) {
+        AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(
+                this, R.style.Theme_AppCompat_DayNight_Dialog);
+        myAlertDialog.setTitle("Upload Pictures Option");
+        myAlertDialog.setMessage("How do you want to set your picture?");
+
+
+
+        myAlertDialog.setPositiveButton("Gallery",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Intent intent = new Intent();
+// Show only images, no videos or anything else
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+// Always show the chooser (if there are multiple options available)
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE);
+                    }
+                });
+
+        myAlertDialog.setNegativeButton("Camera",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                    }
+                });
+        myAlertDialog.show();
+    }
+
 
 
     @Override
@@ -65,9 +101,6 @@ public class AjouterEventActivity extends AppCompatActivity {
 
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                    // Log.d(TAG, String.valueOf(bitmap));
-
-                    ImageView imageView = (ImageView) findViewById(R.id.imagatest);
                     imageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -77,11 +110,11 @@ public class AjouterEventActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Log.d(TAG, String.valueOf(bitmap));
-
-            ImageView imageView = (ImageView) findViewById(R.id.imagatest);
             imageView.setImageBitmap(imageBitmap);
         }
+
+        imageView.getLayoutParams().height = 300;
+        imageView.getLayoutParams().width = 300;
 
     }
 
