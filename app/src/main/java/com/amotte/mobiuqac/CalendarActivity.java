@@ -168,7 +168,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         startOfMonth.set(Calendar.YEAR, year);
         startOfMonth.set(Calendar.MONTH, month - 1);
         startOfMonth.set(Calendar.DAY_OF_MONTH, 1);
-        startOfMonth.set(Calendar.HOUR_OF_DAY, 0);
+        startOfMonth.set(Calendar.HOUR_OF_DAY, 8);
         startOfMonth.set(Calendar.MINUTE, 0);
         startOfMonth.set(Calendar.SECOND, 0);
         startOfMonth.set(Calendar.MILLISECOND, 0);
@@ -248,7 +248,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         endTime.set(Calendar.MONTH, Integer.parseInt(dateDebCours[1])-1);
         endTime.set(Calendar.YEAR, Integer.parseInt(dateDebCours[2]));
 
-        WeekViewEvent event = new WeekViewEvent (1, c.getName(), startTime, endTime);
+        WeekViewEvent event = new WeekViewEvent (1,c.getName(), c.getLocal() ,startTime, endTime);
         event.setColor(getResources().getColor(R.color.colorPrimary));
 
         events.add(event);
