@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".Add_Event_Activity">
+    tools:context=".AjouterEventActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -36,12 +36,18 @@
         android:hint="Nom de l'événement "
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/editText2"
+    <TextView
+        android:id="@+id/date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="date"
-        android:autofillHints="Date"/>
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:maxLines="3"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="#444"
+        android:textSize="18dp"
+        android:hint="Nouvel événement"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -311,6 +311,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 rootRef = FirebaseDatabase.getInstance().getReference();
                 userRef = rootRef.child("users").child(FirebaseUser.getUid());
 
+
                 userRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
