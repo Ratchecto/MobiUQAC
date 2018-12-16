@@ -59,7 +59,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         customViewHolder.title.setText(Html.fromHtml(evenement.getTitle()));
         Date d= evenement.getDate();
-        customViewHolder.date.setText(new SimpleDateFormat("d MMMM - HH:MM").format(d));
+        customViewHolder.date.setText(new SimpleDateFormat("d MMMM - HH:mm").format(d));
 
 
         View.OnClickListener listener = new View.OnClickListener() {

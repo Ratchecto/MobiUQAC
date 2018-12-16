@@ -103,6 +103,14 @@ public class Event_frag extends AppCompatActivity {
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(Evenement item) {
+                                Intent i = new Intent(Event_frag.this, ShowEvent.class);
+                                i.putExtra("titre", item.getTitle());
+                                i.putExtra("description", item.getDescription());
+                                i.putExtra("date", item.getDateToString());
+                                i.putExtra("thumbnail", item.getThumbnail());
+                                i.putExtra("localisation", item.getLocalisation());
+
+                                startActivity(i);
                                 Toast.makeText(Event_frag.this, item.getTitle(), Toast.LENGTH_LONG).show();
                             }
                         });

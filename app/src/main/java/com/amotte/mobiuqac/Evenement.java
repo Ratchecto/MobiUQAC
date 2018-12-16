@@ -1,5 +1,6 @@
 package com.amotte.mobiuqac;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Evenement {
@@ -7,6 +8,9 @@ public class Evenement {
     private String thumbnail;
     private String description;
     private Date date;
+    private String localisation;
+    private String dateToString;
+
     public Evenement(String nom, Date d, String des, String img){
         title= nom;
         thumbnail= img;
@@ -36,6 +40,11 @@ public class Evenement {
         return date;
     }
 
+    public String getDateToString(){
+        dateToString = new SimpleDateFormat("d MMMM - HH:MM").format(date);
+        return dateToString;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -47,4 +56,8 @@ public class Evenement {
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
+
+    public String getLocalisation() { return localisation; }
+
+    public void setLocalisation(String localisation) { this.localisation = localisation; }
 }

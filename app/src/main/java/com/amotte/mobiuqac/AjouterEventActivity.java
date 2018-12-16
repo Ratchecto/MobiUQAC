@@ -1,23 +1,21 @@
 package com.amotte.mobiuqac;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -36,8 +34,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,6 +62,11 @@ public class AjouterEventActivity extends AppCompatActivity {
     TimePickerDialog timePicker;
 
     Date d = new Date();
+    boolean timeSet = false;
+
+    Uri uri = null;
+
+    File destination;
 
 
     @Override
@@ -79,6 +82,10 @@ public class AjouterEventActivity extends AppCompatActivity {
 
         imageView.getLayoutParams().height = 300;
         imageView.getLayoutParams().width = 300;
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        destination = new File(Environment.getExternalStorageDirectory(), "image.jpg");
 
         date=(TextView) findViewById(R.id.date);
         date.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +126,7 @@ public class AjouterEventActivity extends AppCompatActivity {
                                 d.setMinutes(minute);
 
                                 heure.setText(new SimpleDateFormat("HH:mm").format(d));
+                                timeSet = true;
                             }
                         }, hour, min, true);
                 timePicker.show();
@@ -147,6 +155,7 @@ public class AjouterEventActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
                         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                     }
                 });
@@ -157,29 +166,35 @@ public class AjouterEventActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
-                Uri uri = data.getData();
+        if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            uri = data.getData();
                 filePath = uri;
 
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                    imageView.setImageBitmap(bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
+            uri = Uri.fromFile(destination);
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                date.setText(e.getMessage());
+            }
         }
 
         imageView.getLayoutParams().height = 300;
         imageView.getLayoutParams().width = 300;
+
 
     }
     public void addevent (View v){
