@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -56,6 +57,7 @@ public class AjouterEventActivity extends AppCompatActivity {
     EditText title;
     EditText description;
     TextView heure;
+    String UID;
     DatePickerDialog picker;
     private DatabaseReference rootRef;
     String testurl ="https://www.gettyimages.ca/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
@@ -115,6 +117,7 @@ public class AjouterEventActivity extends AppCompatActivity {
                             public void onTimeSet(TimePicker view, int hour, int minute) {
                                 d.setHours(hour);
                                 d.setMinutes(minute);
+
                                 heure.setText(new SimpleDateFormat("HH:mm").format(d));
                             }
                         }, hour, min, true);
@@ -160,7 +163,6 @@ public class AjouterEventActivity extends AppCompatActivity {
 
                 Uri uri = data.getData();
                 filePath = uri;
-                uploadImage();
 
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
@@ -186,13 +188,7 @@ public class AjouterEventActivity extends AppCompatActivity {
                 if (description.getText().length() > 8){
                     if (filePath != null){
                         uploadImage();
-                        DatabaseReference listeventref = rootRef.child("events");
-                        DatabaseReference eventref = listeventref.child("test1");
-                        //Evenement e = new Evenement("nom event", date, description.getText(),testurl);
-                        //eventref.setValue(e);
 
-                        setResult(Activity.RESULT_OK);
-                        finish();
 
                     }else{
                         Toast.makeText(AjouterEventActivity.this, "Merci d'ajouter une image", Toast.LENGTH_SHORT).show();
@@ -217,13 +213,14 @@ public class AjouterEventActivity extends AppCompatActivity {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Ajout de l'événement");
             progressDialog.show();
-
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            UID= UUID.randomUUID().toString();
+            StorageReference ref = storageReference.child("images/"+ UID);
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
+                            uploadEvent();
                         }
 
                     })
@@ -244,6 +241,15 @@ public class AjouterEventActivity extends AppCompatActivity {
                     });
         }
     }
+    private void uploadEvent(){
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference listeventref = rootRef.child("events");
+        DatabaseReference eventref = listeventref.child(UUID.randomUUID().toString());
+        Evenement e = new Evenement(title.getText().toString(), d, description.getText().toString(),UID);
+        eventref.setValue(e);
 
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
 
 }

@@ -3,25 +3,32 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.CustomViewHolder> {
     private List<Evenement> evenementList;
     private Context mContext;
     private OnItemClickListener onItemClickListener;
-
+    FirebaseStorage storage;
+    StorageReference storageReference;
     public MyRecyclerViewAdapter(Context context, List<Evenement> evenementList) {
         this.evenementList = evenementList;
         this.mContext = context;
+
     }
 
     @Override
@@ -34,11 +41,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         final Evenement evenement = evenementList.get(i);
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         if (!TextUtils.isEmpty(evenement.getThumbnail())) {
-            Picasso.with(mContext).load(evenement.getThumbnail())
+            /*Picasso.with(mContext).load(evenement.getThumbnail())
                     .error(R.drawable.placeholder)
                     .placeholder(R.drawable.placeholder)
+                    .into(customViewHolder.imageView); */
+            Log.e("ccccccc", evenement.getThumbnail());
+            StorageReference ref = storageReference.child("images/"+ evenement.getThumbnail());
+
+            GlideApp.with(mContext)
+                    .load(ref)
                     .into(customViewHolder.imageView);
         }
 
