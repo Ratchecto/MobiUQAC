@@ -45,12 +45,9 @@ public class Event_frag extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 case R.id.navigation_about:
-                    Intent intent3 = new Intent(Event_frag.this, LoginActivity.class);
-                    startActivity(intent3);
+
                     return true;
                 case R.id.navigation_event:
-                    Intent intent2 = new Intent(Event_frag.this, Event_frag.class);
-                    startActivity(intent2);
                     return true;
             }
             return false;
@@ -65,6 +62,10 @@ public class Event_frag extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_events);
         FloatingActionButton fab =  findViewById(R.id.addevent);
+
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setSelectedItemId(R.id.navigation_event);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,10 +87,6 @@ public class Event_frag extends AppCompatActivity {
         DatabaseReference eventref = listeventref.child("test1");
         //Evenement e = new Evenement("nom event", new Date(), "Description",testurl);
         //eventref.setValue(e);
-
-
-
-
 
         listeventref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
