@@ -62,7 +62,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     FloatingActionButton fab2 ;
     FloatingActionButton fab3;
     boolean isFABOpen;
-
+    boolean added=false;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     private static ListeCours dbCours= new ListeCours();
@@ -148,13 +148,14 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode ==RESULT_OK) {
+            String result = data.getStringExtra("result");
+            user.addNomCours(result);
+            userRef.setValue(user);
 
-        String result=data.getStringExtra("result");
-        user.addNomCours(result);
-        userRef.setValue(user);
-
-        update();
-        this.recreate();
+            update();
+            this.recreate();
+        }
 
 
     }
@@ -198,21 +199,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        /*String name = event.getName();
-        String location  = event.getLocation();
-        Calendar dateDebut = event.getStartTime();
-        Calendar dateFin = event.getEndTime();
-
-        String[] date1 = dateDebut.getTime().toString().split(" ");
-        String[] date2 = dateFin.getTime().toString().split(" ");
-
-        Context context = getApplicationContext();
-        CharSequence text = name + ",  " + location + ". Du " + date1[2] + " " + date1[1] + " " + date1[5] + " au "
-                + date2[2] + " " + date2[1] + " " + date2[5];
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();*/
 
         for (Cours cour : dbCours.getCoursFromUser(user)){
             if(cour != null){
@@ -317,7 +303,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User value = dataSnapshot.getValue(User.class);
                         user = value;
+                        Log.e("reseeeeee","on set la value à partir de user");
+
                         update();
+                        addListener();
                     }
 
                     @Override
@@ -325,29 +314,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                         Log.w("ccc", "Failed to read value.", error.toException());
                     }
                 });
-
-
-            DatabaseReference coursRef = rootRef.child("cours");
-
-            coursRef.addListenerForSingleValueEvent(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.e("cccc", "ondatachange");
-
-                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                                dbCours.addCours(dsp.getValue(Cours.class));
-                            }
-                            update();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            Log.w(TAG, "Failed to read value.", error.toException());
-                        }
-                    });
-
-
         }
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -387,7 +353,34 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             }
 
         }else{
+            Log.e("reseeeeee","on set la value");
             userRef.setValue(new User(FirebaseUser.getEmail()));
+        }
+    }
+    public void addListener(){
+        if (! added) {
+            added = true;
+            DatabaseReference coursRef = rootRef.child("cours");
+
+            coursRef.addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.e("cccc", "ondatachange");
+
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                dbCours.addCours(dsp.getValue(Cours.class));
+                            }
+                            Log.e("reseeeeee", "on set la value à partir de ref");
+                            update();
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
         }
     }
 
