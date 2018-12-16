@@ -189,7 +189,6 @@ public class AjouterEventActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
-                date.setText(e.getMessage());
             }
         }
 
@@ -262,6 +261,8 @@ public class AjouterEventActivity extends AppCompatActivity {
         DatabaseReference listeventref = rootRef.child("events");
         DatabaseReference eventref = listeventref.child(UUID.randomUUID().toString());
         Evenement e = new Evenement(title.getText().toString(), d, description.getText().toString(),UID);
+        EditText emplacement = (EditText) findViewById(R.id.emplacement);
+        e.setLocalisation(emplacement.getText().toString());
         eventref.setValue(e);
 
         setResult(Activity.RESULT_OK);

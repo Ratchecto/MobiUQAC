@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 
 public class ShowEvent extends Activity {
 
+    FirebaseStorage storage;
+    StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +28,15 @@ public class ShowEvent extends Activity {
         TextView tvTitle = (TextView) findViewById(R.id.eventTitle);
         tvTitle.setText(title);
         ImageView imgEvent = (ImageView) findViewById(R.id.thumbnail);
-        Picasso.with(this).load(thumbnail)
-                .error(R.drawable.placeholder)
-                .placeholder(R.drawable.placeholder)
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        StorageReference ref = storageReference.child("images/"+ thumbnail);
+
+        GlideApp.with(this)
+                .load(ref)
                 .into(imgEvent);
+        
         TextView evtDate = (TextView) findViewById(R.id.eventDate);
         evtDate.setText(date);
         TextView evtLocal = (TextView) findViewById(R.id.eventLocalisation);
