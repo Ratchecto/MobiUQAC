@@ -63,24 +63,10 @@
             android:textSize="18dp"/>
 
         <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dateDisplay"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
-            android:maxLines="3"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="#444"
-            android:textSize="18dp"
-            android:text="Pour plus d'information sur le cours, cliquez :" />
-
-        <TextView
             android:id="@+id/linkDisplay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView6"
+            android:layout_below="@+id/dateDisplay"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:maxLines="3"
