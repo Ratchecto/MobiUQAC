@@ -41,7 +41,7 @@ public class Evenement {
     }
 
     public String getDateToString(){
-        dateToString = new SimpleDateFormat("d MMMM - HH:MM").format(date);
+        dateToString = new SimpleDateFormat("d MMMM - HH:mm").format(date);
         return dateToString;
     }
 
