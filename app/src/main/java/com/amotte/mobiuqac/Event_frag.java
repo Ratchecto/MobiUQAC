@@ -56,7 +56,6 @@ public class Event_frag extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     FirebaseUser FirebaseUser;
-    String testurl ="https://www.gettyimages.ca/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
