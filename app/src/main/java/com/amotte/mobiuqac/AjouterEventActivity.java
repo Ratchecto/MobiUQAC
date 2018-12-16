@@ -3,6 +3,7 @@ package com.amotte.mobiuqac;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,10 +20,12 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,7 +38,12 @@ public class AjouterEventActivity extends AppCompatActivity {
     ImageView imageView ;
 
     TextView date;
+    TextView heure;
     DatePickerDialog picker;
+    TimePickerDialog timePicker;
+
+    Date d = new Date();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +63,41 @@ public class AjouterEventActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final Calendar cldr = Calendar.getInstance();
                 int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
+                final int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
                 // date picker dialog
                 picker = new DatePickerDialog(AjouterEventActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                Date d = new Date(year,view.getMonth(),dayOfMonth);
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.set(year, view.getMonth(),dayOfMonth);
-                                d =calendar.getTime();
-                                date.setText(new SimpleDateFormat("d MMMM  HH:MM").format(d));
+                                d.setYear(year);
+                                d.setMonth(monthOfYear);
+                                d.setDate(dayOfMonth);
+                                date.setText(new SimpleDateFormat("d MMMM").format(d));
 
                             }
                         }, year, month, day);
                 picker.show();
+            }
+        });
+
+        heure=(TextView) findViewById(R.id.heure);
+        heure.setOnClickListener(new View.OnClickListener() {
+            final Calendar cldr = Calendar.getInstance();
+            int hour = cldr.get(Calendar.HOUR);
+            int min = cldr.get(Calendar.MINUTE);
+            @Override
+            public void onClick(View v) {
+                timePicker = new TimePickerDialog(AjouterEventActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hour, int minute) {
+                                d.setHours(hour);
+                                d.setMinutes(minute);
+                                heure.setText(new SimpleDateFormat("HH:mm").format(d));
+                            }
+                        }, hour, min, true);
+                timePicker.show();
             }
         });
     }
