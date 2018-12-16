@@ -49,6 +49,12 @@
         <activity
             android:name=".ShowCours"
             android:label="Montrer les informations d&apos;un cours"></activity>
+
+        <activity
+            android:name=".ShowEvent"
+            android:label="Montrer les informations d&apos;un cours">
+
+        </activity>
     </application>
 
 </manifest>
