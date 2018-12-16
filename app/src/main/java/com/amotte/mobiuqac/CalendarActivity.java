@@ -291,9 +291,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         if (FirebaseUser == null) {
                 Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
                 startActivity(intent);
-
-            }
-        else {
+        }else {
                 rootRef = FirebaseDatabase.getInstance().getReference();
                 userRef = rootRef.child("users").child(FirebaseUser.getUid());
 
@@ -303,10 +301,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User value = dataSnapshot.getValue(User.class);
                         user = value;
-                        Log.e("reseeeeee","on set la value à partir de user");
-
-                        update();
                         addListener();
+                        update();
+
                     }
 
                     @Override
@@ -337,6 +334,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             return false;
         }
     };
+
     public static User getUser(){
         return user;
     }
@@ -353,10 +351,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             }
 
         }else{
-            Log.e("reseeeeee","on set la value");
             userRef.setValue(new User(FirebaseUser.getEmail()));
         }
     }
+
     public void addListener(){
         if (! added) {
             added = true;
@@ -366,19 +364,15 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.e("cccc", "ondatachange");
-
                             for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                                 dbCours.addCours(dsp.getValue(Cours.class));
                             }
-                            Log.e("reseeeeee", "on set la value à partir de ref");
                             update();
-
                         }
 
                         @Override
                         public void onCancelled(DatabaseError error) {
-                            Log.w(TAG, "Failed to read value.", error.toException());
+                            Log.w(TAG, "Echec de lecture des cours", error.toException());
                         }
                     });
         }

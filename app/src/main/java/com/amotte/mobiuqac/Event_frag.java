@@ -88,6 +88,7 @@ public class Event_frag extends AppCompatActivity {
         //Evenement e = new Evenement("nom event", new Date(), "Description",testurl);
         //eventref.setValue(e);
 
+
         listeventref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -117,9 +118,17 @@ public class Event_frag extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError error) {
-                        Log.w(TAG, "Failed to read value.", error.toException());
+                        Log.w(TAG, "Echec de la lecture des événements", error.toException());
                     }
                 });
+
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode ==RESULT_OK) {
+
+            this.recreate();
+        }
+
 
     }
 }

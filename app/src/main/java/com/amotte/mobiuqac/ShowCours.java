@@ -2,6 +2,8 @@ package com.amotte.mobiuqac;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.rebillard.mobiuqac.Cours;
@@ -26,7 +28,10 @@ public class ShowCours extends Activity {
         name.setText(c.getName());
         location.setText(c.getLocal());
         date.setText("Du " + c.getDateBeg() + " au " + c.getDateFinish());
-        link.setText("https://cours.uqac.ca/" + c.getIdentifiant());
+        String l = "'https://cours.uqac.ca/"+ c.getIdentifiant()+"'";
+        String linkText = "<a href=" + l + ">ici</a>";
+        link.setText(Html.fromHtml(linkText));
+        link.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private Cours coursFromString(String s){
@@ -54,7 +59,7 @@ public class ShowCours extends Activity {
         c.setHourFinish(hF.substring(hF.indexOf("=")+1, hF.length()));
         c.setDateBeg(dB.substring(dB.indexOf("=")+1, dB.length()));
         c.setDateFinish(dF.substring(dF.indexOf("=")+1, dF.length()));
-        c.setLocal(local.substring(local.indexOf("=")+1, local.length()));
+        c.setLocal(local.substring(local.indexOf("=")+1, local.length()-1));
         return c;
     }
 }

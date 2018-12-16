@@ -74,7 +74,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="#444"
             android:textSize="18dp"
-            android:text="Pour plus d'information sur le cours, aller :" />
+            android:text="Pour plus d'information sur le cours, cliquez :" />
 
         <TextView
             android:id="@+id/linkDisplay"

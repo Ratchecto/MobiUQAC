@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="12dp"
-        android:hint="Nouvel événement"
+        android:text="Nouvel événement"
         android:maxLines="3"
         android:padding="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
@@ -44,7 +44,8 @@
             android:layout_height="70dp"
             android:layout_marginTop="40dp"
             android:layout_weight="1"
-            android:text="Enregistrer événement" />
+            android:text="Ajouter l'événement"
+            android:onClick="addevent"/>
     </LinearLayout>
 
     <EditText
