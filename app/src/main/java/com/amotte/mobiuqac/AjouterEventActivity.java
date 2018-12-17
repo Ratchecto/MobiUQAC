@@ -1,6 +1,5 @@
 package com.amotte.mobiuqac;
 
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -36,7 +35,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,14 +60,11 @@ public class AjouterEventActivity extends AppCompatActivity {
     String UID;
     DatePickerDialog picker;
     private DatabaseReference rootRef;
-    String testurl ="https://www.gettyimages.ca/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
     TimePickerDialog timePicker;
 
     Date d = new Date();
     boolean timeSet = false;
-
     Uri uri = null;
-
     File destination;
 
 

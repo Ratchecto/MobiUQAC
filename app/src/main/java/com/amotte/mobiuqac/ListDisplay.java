@@ -26,7 +26,6 @@ import com.rebillard.mobiuqac.ListeCours;
 import java.util.ArrayList;
 
 public class ListDisplay extends Activity {
-    // Array of strings...
     private String[] arraySem = {"Automne 2018", "Hiver 2019", "Été 2019"};
     String[] exemple = {};
     private ArrayList<String> a = new ArrayList<String>();

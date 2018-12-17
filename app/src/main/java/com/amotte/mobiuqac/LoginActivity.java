@@ -211,7 +211,6 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
                 Toast.makeText(getApplicationContext(),"failed",Toast.LENGTH_SHORT).show();
             }
         }
@@ -226,15 +225,11 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            //mDatabase.child("users").child(user.getUid()).setValue(new User(user.getEmail()));
                             startActivity(new Intent(getApplicationContext(),CalendarActivity.class));
                             finish();
                         } else {
-                            // If sign in fails, display a message to the user.
                             Toast.makeText(getApplicationContext(),"Raté :( ",Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }
