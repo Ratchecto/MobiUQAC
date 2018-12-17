@@ -53,7 +53,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class CalendarActivity extends AppCompatActivity implements WeekView.EventClickListener, WeekView.EmptyViewClickListener, MonthLoader.MonthChangeListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = "ccccc";
 
     WeekView mWeekView;
     List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
@@ -104,7 +104,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 }
             }
         });
-        // Get a reference for the week view in the layout.
         mWeekView = findViewById(R.id.weekView);
         mWeekView.setAccessibilityLiveRegion(MODE_APPEND);
         mWeekView.setNumberOfVisibleDays(7);
@@ -112,7 +111,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         events= new ArrayList<WeekViewEvent>();
         clickedTime=Calendar.getInstance();
 
-        // Lets change some dimensions to best fit the view.
         mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
         mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
@@ -161,12 +159,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
 
     }
-    //onActivityResult
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int year, int month) {
-        // Get the starting point and ending point of the given month. We need this to find the
-        // events of the given month.
         Calendar startOfMonth = Calendar.getInstance();
         startOfMonth.set(Calendar.YEAR, year);
         startOfMonth.set(Calendar.MONTH, month - 1);
@@ -181,14 +176,11 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         endOfMonth.set(Calendar.MINUTE, 59);
         endOfMonth.set(Calendar.SECOND, 59);
 
-        // Find the events that were added by tapping on empty view and that occurs in the given
-        // time frame.
         ArrayList<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
         for (WeekViewEvent event : this.events) {
             if (event.getEndTime().getTimeInMillis() > startOfMonth.getTimeInMillis() &&
                     event.getStartTime().getTimeInMillis() < endOfMonth.getTimeInMillis()) {
                 events.add(event);
-
             }
         }
         return events;
@@ -196,7 +188,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     public void onEmptyViewClicked(final Calendar time) {
         clickedTime=(Calendar) time.clone();
         mWeekView.notifyDatasetChanged();
-        Log.i("msg","Empty box has been filled successfully.");
     }
 
     @Override
@@ -214,9 +205,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
 
     public List<? extends WeekViewEvent> AddCours(Cours c){
-
-       // Log.e("cccc",debut.toString()+"----"+fin.toString());
-        Log.e("cccc",c.toString());
 
         String[] dateDebCours = c.getDateBeg().split("-");
         String[] dateFinCours = c.getDateFinish().split("-");
@@ -242,8 +230,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         events.add(event);
         events.get(0).toString();
         mWeekView.notifyDatasetChanged();
-
-        Log.e("cccc","ajout de :");
         return events;
     }
 
@@ -280,7 +266,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 cal2.add(Calendar.WEEK_OF_MONTH, 1);
                 cur = cal.getTime();
             }
-            Log.e("cccc",l.toString());
         } catch (ParseException e) {
             e.printStackTrace();
         }

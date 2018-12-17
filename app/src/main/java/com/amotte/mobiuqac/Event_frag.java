@@ -12,7 +12,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,13 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 public class Event_frag extends AppCompatActivity {
-    private static final String TAG = "RecyclerViewExample";
+    private static final String TAG = "ccccc";
 
     private List<Evenement> feedsList;
     private RecyclerView mRecyclerView;
@@ -78,12 +74,9 @@ public class Event_frag extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        //
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //parseResult();
 
 
         rootRef = FirebaseDatabase.getInstance().getReference();
@@ -128,7 +121,6 @@ public class Event_frag extends AppCompatActivity {
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode ==RESULT_OK) {
-
             this.recreate();
         }
 

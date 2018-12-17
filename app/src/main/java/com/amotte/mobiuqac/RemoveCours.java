@@ -65,8 +65,6 @@ public class RemoveCours extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 
                 Intent datas = new Intent();
-                datas.putExtra("result", "cc");
-
 
                 String data = listCours.getItemAtPosition(position).toString();
                 user.removeNomCours(data);
