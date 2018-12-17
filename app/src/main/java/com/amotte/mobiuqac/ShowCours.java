@@ -24,12 +24,13 @@ public class ShowCours extends Activity {
         TextView date = (TextView) findViewById(R.id.dateDisplay);
         TextView link = (TextView) findViewById(R.id.linkDisplay);
 
+        String info = "Pour plus d'information sur le cours, cliquez : ";
 
         name.setText(c.getName());
         location.setText(c.getLocal());
         date.setText("Du " + c.getDateBeg() + " au " + c.getDateFinish());
         String l = "'https://cours.uqac.ca/"+ c.getIdentifiant()+"'";
-        String linkText = "<a href=" + l + ">ici</a>";
+        String linkText = info + "<a href=" + l + ">ici</a>";
         link.setText(Html.fromHtml(linkText));
         link.setMovementMethod(LinkMovementMethod.getInstance());
     }
