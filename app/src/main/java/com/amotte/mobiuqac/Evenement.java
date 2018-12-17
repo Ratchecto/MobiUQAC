@@ -10,6 +10,7 @@ public class Evenement {
     private Date date;
     private String localisation;
     private String dateToString;
+    private  String uid;
 
     public Evenement(String nom, Date d, String des, String img){
         title= nom;
@@ -48,6 +49,13 @@ public class Evenement {
     public void setTitle(String title) {
         this.title = title;
     }
+    public void setUid(String title) {
+        this.uid = title;
+    }
+    public String getUid() {
+        return uid;
+    }
+
 
     public String getThumbnail() {
         return thumbnail;

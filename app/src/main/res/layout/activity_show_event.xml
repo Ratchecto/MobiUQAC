@@ -70,6 +70,19 @@
             android:textColor="#444"
             android:textSize="18dp" />
 
+        <Button
+            android:id="@+id/supp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="20dp"
+            android:visibility="invisible"
+            android:text="Supprimer"
+            android:onClick="removeEvent"/>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

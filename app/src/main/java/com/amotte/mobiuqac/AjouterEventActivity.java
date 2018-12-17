@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -51,6 +52,8 @@ public class AjouterEventActivity extends AppCompatActivity {
     private Uri filePath= null;
     FirebaseStorage storage;
     StorageReference storageReference;
+    private FirebaseAuth mAuth;
+    com.google.firebase.auth.FirebaseUser FirebaseUser;
     private boolean dateset= false;
     TextView date;
     EditText title;
@@ -74,7 +77,8 @@ public class AjouterEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add__event_);
-
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser = mAuth.getCurrentUser();
         imageView = (ImageView) findViewById(R.id.imagaView);
         title = findViewById(R.id.title);
         description = findViewById(R.id.description);
@@ -260,10 +264,11 @@ public class AjouterEventActivity extends AppCompatActivity {
     private void uploadEvent(){
         rootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference listeventref = rootRef.child("events");
-        DatabaseReference eventref = listeventref.child(UUID.randomUUID().toString());
+        DatabaseReference eventref = listeventref.child(d.getTime()+FirebaseUser.getUid());
         Evenement e = new Evenement(title.getText().toString(), d, description.getText().toString(),UID);
         EditText emplacement = (EditText) findViewById(R.id.emplacement);
         e.setLocalisation(emplacement.getText().toString());
+        e.setUid(FirebaseUser.getUid());
         eventref.setValue(e);
 
         setResult(Activity.RESULT_OK);

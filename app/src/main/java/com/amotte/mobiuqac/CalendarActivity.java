@@ -116,7 +116,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
         mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-
+        mWeekView.setHourHeight(100);
+        mWeekView.setNumberOfVisibleDays(5);
+        mWeekView.goToHour(7);
         mWeekView.setMonthChangeListener(this);
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOnEventClickListener(this);
@@ -258,6 +260,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             debut=new SimpleDateFormat("dd-MM-yyyyHH:mm").parse(c.getDateBeg()+c.getHourBegin());
             debut2=new SimpleDateFormat("dd-MM-yyyyHH:mm").parse(c.getDateBeg()+c.getHourFinish());
             fin=new SimpleDateFormat("dd-MM-yyyy").parse(c.getDateFinish());
+            fin.setHours(23);
+            fin.setMinutes(59);
             cur=debut;
             cal.setTime(debut);
             cal2.setTime(debut2);

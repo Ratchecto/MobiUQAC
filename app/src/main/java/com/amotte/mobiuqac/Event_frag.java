@@ -21,9 +21,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.rebillard.mobiuqac.Cours;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -88,20 +88,18 @@ public class Event_frag extends AppCompatActivity {
 
         rootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference listeventref = rootRef.child("events");
-        DatabaseReference eventref = listeventref.child("test1");
-        //Evenement e = new Evenement("nom event", new Date(), "Description",testurl);
-        //eventref.setValue(e);
 
-
-        listeventref.addListenerForSingleValueEvent(
+        listeventref.addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         feedsList = new ArrayList<>();
+                        Log.e("ccccc","update db");
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                             Evenement event = dsp.getValue(Evenement.class);
                             feedsList.add(event);
                         }
+                        //Collections.reverse(feedsList);
                         adapter = new MyRecyclerViewAdapter(Event_frag.this, feedsList);
                         mRecyclerView.setAdapter(adapter);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
@@ -113,9 +111,10 @@ public class Event_frag extends AppCompatActivity {
                                 i.putExtra("date", item.getDateToString());
                                 i.putExtra("thumbnail", item.getThumbnail());
                                 i.putExtra("localisation", item.getLocalisation());
+                                i.putExtra("uid", item.getUid());
+                                i.putExtra("id",item.getDate().getTime()+item.getUid());
 
                                 startActivity(i);
-                                Toast.makeText(Event_frag.this, item.getTitle(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,9 +48,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     .error(R.drawable.placeholder)
                     .placeholder(R.drawable.placeholder)
                     .into(customViewHolder.imageView); */
-            Log.e("ccccccc", evenement.getThumbnail());
             StorageReference ref = storageReference.child("images/"+ evenement.getThumbnail());
-
             GlideApp.with(mContext)
                     .load(ref)
                     .into(customViewHolder.imageView);
