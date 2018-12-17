@@ -40,9 +40,9 @@ public class ShowEvent extends Activity {
         id=getIntent().getExtras().getString("id");
 
 
-        TextView tvTitle = (TextView) findViewById(R.id.eventTitle);
+        TextView tvTitle = findViewById(R.id.eventTitle);
         tvTitle.setText(title);
-        ImageView imgEvent = (ImageView) findViewById(R.id.thumbnail);
+        ImageView imgEvent =  findViewById(R.id.thumbnail);
         Button btnsupp =  findViewById(R.id.supp);
         if(uid.equals(FirebaseUser.getUid())){
             btnsupp.setVisibility(View.VISIBLE);
@@ -56,14 +56,14 @@ public class ShowEvent extends Activity {
                 .load(ref)
                 .into(imgEvent);
 
-        TextView evtDate = (TextView) findViewById(R.id.eventDate);
+        TextView evtDate = findViewById(R.id.eventDate);
         evtDate.setText(date);
-        TextView evtLocal = (TextView) findViewById(R.id.eventLocalisation);
+        TextView evtLocal = findViewById(R.id.eventLocalisation);
         if(localisation == null)
             evtLocal.setText("Pas de localisation pour le moment");
         else
             evtLocal.setText(localisation);
-        TextView evtDescription = (TextView) findViewById(R.id.eventDescription);
+        TextView evtDescription = findViewById(R.id.eventDescription);
         evtDescription.setText(description);
 
 
