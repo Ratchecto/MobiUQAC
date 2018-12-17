@@ -11,19 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-
 
 public class ShowEvent extends Activity {
 
     FirebaseStorage storage;
     StorageReference storageReference;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
     com.google.firebase.auth.FirebaseUser FirebaseUser;
     String id;
 

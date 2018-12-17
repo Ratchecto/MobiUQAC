@@ -19,10 +19,7 @@ public class ListeCours {
         }
         return userCours;
     }
-    public Cours gettest() {
-        ArrayList<Cours> userCours = new ArrayList<>();
-        return dbCours.get(dbCours.keySet().iterator().next());
-    }
+
     public ArrayList<Cours> getCoursBySemester(String sem){
         ArrayList<Cours> userCours= new ArrayList<>();
         for( Cours cours : dbCours.values()){
