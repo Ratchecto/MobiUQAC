@@ -34,6 +34,7 @@ public class Event_frag extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MyRecyclerViewAdapter adapter;
     private ProgressBar progressBar;
+    private FirebaseAuth mAuth;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -45,7 +46,9 @@ public class Event_frag extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 case R.id.navigation_about:
-
+                    mAuth.signOut();
+                    Intent intent1 = new Intent(Event_frag.this, LoginActivity.class);
+                    startActivity(intent1);
                     return true;
                 case R.id.navigation_event:
                     return true;
@@ -53,7 +56,7 @@ public class Event_frag extends AppCompatActivity {
             return false;
         }
     };
-    private FirebaseAuth mAuth;
+
     private DatabaseReference rootRef;
     FirebaseUser FirebaseUser;
     @Override
@@ -61,6 +64,8 @@ public class Event_frag extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_events);
         FloatingActionButton fab =  findViewById(R.id.addevent);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser = mAuth.getCurrentUser();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setSelectedItemId(R.id.navigation_event);
